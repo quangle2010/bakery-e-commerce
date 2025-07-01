@@ -14,6 +14,7 @@ import Profile from '../pages/user/Profile.vue'
 import Orders from '../pages/user/Orders.vue'
 import ChangePassword from '../pages/user/ChangePassword.vue'
 import OrderDetail from '../pages/user/OrderDetail.vue'
+import ProductDetail from '../pages/user/ProductDetail.vue'
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
@@ -28,12 +29,15 @@ const routes: RouteRecordRaw[] = [
             { path: 'payment', component: Payment },
             { path: 'register', component: Register },
             { path: 'login', component: Login },
-            { path: 'user', component: ProfileLayout ,
+            { path: 'product-detail/:id', component: ProductDetail },
+            {
+                path: 'user', component: ProfileLayout,
                 children: [
                     { path: 'profile', component: Profile },
                     { path: 'orders', component: Orders },
                     { path: 'change-password', component: ChangePassword },
-                    { path: 'order-detail/:id', component: OrderDetail }
+                    { path: 'order-detail/:id', component: OrderDetail },
+
                 ]
             },
         ]
