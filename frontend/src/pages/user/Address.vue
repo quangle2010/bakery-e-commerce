@@ -39,7 +39,6 @@
     </div>
 </template>
 <script lang="ts" setup>
-import router from '../../router';
 
 </script>
 <style scoped>

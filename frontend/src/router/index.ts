@@ -1,61 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
-import UserLayout from '../layouts/UserLayout.vue'
-import Home from '../pages/user/Home.vue'
-import Contact from '../pages/user/Contact.vue'
-import About from '../pages/user/About.vue'
-import Products from '../pages/user/Products.vue'
-import Cart from '../pages/user/Cart.vue'
-import Payment from '../pages/user/Payment.vue'
-import Register from '../pages/user/Register.vue'
-import Login from '../pages/user/Login.vue'
-import ProfileLayout from '../layouts/ProfileLayout.vue'
-import Profile from '../pages/user/Profile.vue'
-import Orders from '../pages/user/Orders.vue'
-import ChangePassword from '../pages/user/ChangePassword.vue'
-import OrderDetail from '../pages/user/OrderDetail.vue'
-import ProductDetail from '../pages/user/ProductDetail.vue'
-import Address from '../pages/user/Address.vue'
-import Favorite from '../pages/user/Favorite.vue'
-import AddAddress from '../pages/user/AddAddress.vue'
-import EditAddress from '../pages/user/EditAddress.vue'
-import ForgotPassword from '../pages/user/ForgotPassword.vue'
-const routes: RouteRecordRaw[] = [
-    {
-        path: '/',
-        component: UserLayout,
-        children: [
-            { path: '', redirect: 'home' },
-            { path: 'home', component: Home },
-            { path: 'contact', component: Contact },
-            { path: 'about-us', component: About },
-            { path: 'products', component: Products },
-            { path: 'cart', component: Cart },
-            { path: 'payment', component: Payment },
-            { path: 'register', component: Register },
-            { path: 'login', component: Login },
-            { path: 'product-detail/:id', component: ProductDetail },
-            { path: 'forgot-password', component: ForgotPassword },
-            {
-                path: 'user', component: ProfileLayout,
-                children: [
-                    { path: 'profile', component: Profile },
-                    { path: 'orders', component: Orders },
-                    { path: 'change-password', component: ChangePassword },
-                    { path: 'order-detail/:id', component: OrderDetail },
-                    { path: 'address', component: Address },
-                    { path: 'favorites', component: Favorite },
-                    { path: 'add-address', component: AddAddress },
-                    { path: 'edit-address/:id', component: EditAddress },
-                ]
-            },
-        ]
-    }
-]
+
+import { adminRoutes } from './admin.routes'
+import { userRoutes } from './user.routes'
+import { publicRoutes } from './public.routes'
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    ...publicRoutes,
+    ...userRoutes,
+    ...adminRoutes
+  ]
 })
 
 export default router

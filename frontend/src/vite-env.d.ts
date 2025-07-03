@@ -5,3 +5,11 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+// Đảm bảo TypeScript nhận diện đối tượng window
+interface Window {
+  innerWidth: number;
+  innerHeight: number;
+  addEventListener: typeof addEventListener;
+  removeEventListener: typeof removeEventListener;
+}
