@@ -2,7 +2,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #fff8f0;">
       <div class="container py-2">
-        <router-link class="navbar-brand d-flex align-items-center" to="/"> 
+        <router-link class="navbar-brand d-flex align-items-center" to="/home"> 
           <span class="rounded-circle bg-gradient-primary p-2 me-2 d-flex align-items-center justify-content-center"
             style="background: linear-gradient(45deg, #f8a5c2, #fd868c); width: 40px; height: 40px;">
             <img src="https://cdn-icons-png.flaticon.com/512/2718/2718224.png" alt="Logo" width="24" height="24" class="logo-img">

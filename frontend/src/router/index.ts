@@ -15,6 +15,11 @@ import Orders from '../pages/user/Orders.vue'
 import ChangePassword from '../pages/user/ChangePassword.vue'
 import OrderDetail from '../pages/user/OrderDetail.vue'
 import ProductDetail from '../pages/user/ProductDetail.vue'
+import Address from '../pages/user/Address.vue'
+import Favorite from '../pages/user/Favorite.vue'
+import AddAddress from '../pages/user/AddAddress.vue'
+import EditAddress from '../pages/user/EditAddress.vue'
+import ForgotPassword from '../pages/user/ForgotPassword.vue'
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
@@ -30,6 +35,7 @@ const routes: RouteRecordRaw[] = [
             { path: 'register', component: Register },
             { path: 'login', component: Login },
             { path: 'product-detail/:id', component: ProductDetail },
+            { path: 'forgot-password', component: ForgotPassword },
             {
                 path: 'user', component: ProfileLayout,
                 children: [
@@ -37,7 +43,10 @@ const routes: RouteRecordRaw[] = [
                     { path: 'orders', component: Orders },
                     { path: 'change-password', component: ChangePassword },
                     { path: 'order-detail/:id', component: OrderDetail },
-
+                    { path: 'address', component: Address },
+                    { path: 'favorites', component: Favorite },
+                    { path: 'add-address', component: AddAddress },
+                    { path: 'edit-address/:id', component: EditAddress },
                 ]
             },
         ]
