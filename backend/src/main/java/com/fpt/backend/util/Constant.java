@@ -5,6 +5,9 @@ public class Constant {
     public static final Integer ROLE_USER = 0;// Người dùng thường
     public static final Integer ROLE_ADMIN = 1;// Quản trị viên
 
+    public static final String ROLE_USER_NAME = "ROLE_USER";// Người dùng thường
+    public static final String ROLE_ADMIN_NAME = "ROLE_ADMIN";// Quản trị viên
+
     public static final Integer ORDER_STATUS_CANCELLED = -1; // Đã hủy
     public static final Integer ORDER_STATUS_PENDING = 0; // Chờ xác nhận
 
