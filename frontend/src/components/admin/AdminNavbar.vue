@@ -25,7 +25,8 @@
 
           <div class="dropdown-divider"></div>
           <div class="dropdown-item">
-            <button type="button" class="btn btn-danger w-100 text-start" data-bs-toggle="modal" data-bs-target="#logoutModal">
+            <button type="button" class="btn btn-danger w-100 text-start" data-bs-toggle="modal"
+              data-bs-target="#logoutModal">
               <i class="bi bi-box-arrow-right"></i>
               <span>Đăng xuất</span>
             </button>
@@ -33,7 +34,7 @@
         </div>
       </div>
     </div>
-      <LogoutModal />
+    <LogoutModal />
   </div>
 
 </template>

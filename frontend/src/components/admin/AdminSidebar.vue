@@ -57,7 +57,7 @@ const sidebars = ref([
 }
 
 .logo-container {
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;

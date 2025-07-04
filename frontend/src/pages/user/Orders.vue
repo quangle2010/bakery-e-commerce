@@ -1,7 +1,7 @@
 <template>
     <div class="card mb-4  w-100">
         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-            <h6 class="fw-bold">Thông tin tài khoản</h6>
+            <h6 class="fw-bold">Đơn hàng của tôi</h6>
         </div>
         <div class="card-body p-3">
             <!-- Filter section -->

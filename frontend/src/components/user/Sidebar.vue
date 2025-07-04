@@ -14,9 +14,8 @@
         </div>
         <div class="card-body p-0">
             <ul class="list-group list-group-flush">
-
-                <li class="list-group-item py-3 " v-for="sidebar in sidebars" :key="sidebar.id">
-                    <router-link :to="sidebar.path" class="text-decoration-none d-flex align-items-center">
+                <li class="list-group-item menu-item py-3 " v-for="sidebar in sidebars" :key="sidebar.id" :class="{ active: isActive(sidebar.path) }">
+                    <router-link :to="sidebar.path" class="text-decoration-none d-flex align-items-center" >
                         <i :class="sidebar.icon"></i>
                         <span>{{ sidebar.label }}</span>
                     </router-link>
@@ -28,7 +27,13 @@
 </template>
 <script lang="ts" setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+
+const isActive = (path: string) => {
+  return route.path.startsWith(path);
+};
 const sidebars = ref([
     { id: 1, path: '/user/profile', icon: "bi bi-person-circle me-3 text-primary fs-5", label: 'Thông tin tài khoản' },
     { id: 2, path: '/user/orders', icon: "bi bi-bag me-3 text-primary fs-5", label: 'Đơn hàng' },
@@ -39,3 +44,9 @@ const sidebars = ref([
 ])
 
 </script>
+<style scoped>
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid #42b983;
+}
+</style>

@@ -1,12 +1,12 @@
 <template>
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h4 class="fw-bold mb-0">Quản lý sản phẩm</h4>
-            <small class="text-muted">Danh sách các sản phẩm</small>
+            <h4 class="fw-bold mb-0">Quản lý danh mục</h4>
+            <small class="text-muted">Danh sách các danh mục sản phẩm</small>
         </div>
         <div class="d-flex gap-2">
             <button class="btn btn-sm btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>Thêm sản phẩm
+                <i class="bi bi-plus-circle me-1"></i>Thêm danh mục
             </button>
         </div>
     </div>
