@@ -19,6 +19,7 @@ import com.fpt.backend.security.JwtAuthenticationFilter;
 import com.fpt.backend.security.JwtUtil;
 import com.fpt.backend.service.CustomUserDetailsService;
 import com.fpt.backend.service.UserService;
+import com.fpt.backend.util.Constant;
 
 @Configuration
 @EnableWebSecurity
@@ -49,7 +50,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(Constant.PUBLIC_ROUTER).permitAll()
+                        .requestMatchers("/admin/**").hasAuthority(Constant.ROLE_ADMIN_NAME)
+                        .requestMatchers("/user/**").hasAuthority(Constant.ROLE_USER_NAME)
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

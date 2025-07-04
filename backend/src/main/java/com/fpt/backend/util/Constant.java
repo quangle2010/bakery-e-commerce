@@ -2,6 +2,18 @@ package com.fpt.backend.util;
 
 public class Constant {
 
+
+    public static final String[] PUBLIC_ROUTER = new String[]{
+            "/login",
+            "/register",
+            "/home",
+            "/forgot-password",
+            "/products",
+            "/logout",
+            "/product/{id}",
+            "/products/search/**"
+    };
+
     public static final Integer ROLE_USER = 0;// Người dùng thường
     public static final Integer ROLE_ADMIN = 1;// Quản trị viên
 
