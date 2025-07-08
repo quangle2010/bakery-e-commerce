@@ -45,4 +45,8 @@ public class ResponseEntityUtil {
                 .body(new ResponseData(false, "Validation failed", errors));
     }
 
+   public static ResponseEntity<ResponseData> Thow(String message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseData(false, message, null));
+    }
+
 }

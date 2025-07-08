@@ -28,6 +28,11 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private APIEmailService apiEmailService;
+
+
+
     public User findByEmail(String email) {
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("Email không được để trống");
@@ -73,7 +78,7 @@ public class UserService {
     }
 
     public User getUserIsLogin(String token) {
-        String jwt=token.startsWith("Bearer ")
+        String jwt = token.startsWith("Bearer ")
                 ? token.substring(7)
                 : token;
         String userId = jwtUtil.extractUserId(jwt);
@@ -84,22 +89,25 @@ public class UserService {
         return findById(id);
     }
 
-    public Map<String,Object> getUserDTO(String token){
+    public Map<String, Object> getUserDTO(String token) {
         return userMapper.toDTO(getUserIsLogin(token));
     }
 
-
-  public User register(RegisterBean registerBean) {
+    public User register(RegisterBean registerBean) {
         User user = new User();
         user.setFullName(registerBean.getFullName());
         user.setEmail(registerBean.getEmail());
-        user.setPassword(registerBean.getPassword());
-        if (!registerBean.isPasswordMatch()) {
-            throw new IllegalArgumentException("Mật khẩu và xác nhận mật khẩu không khớp");
+
+        if (!apiEmailService.isEmailVerified(registerBean.getEmail())) {
+               throw new IllegalArgumentException("Email Không tồn tại");
         }
         if (checkEmail(registerBean.getEmail()) != null) {
             throw new IllegalArgumentException("Email đã được sử dụng");
         }
+        if (!registerBean.isPasswordMatch()) {
+            throw new IllegalArgumentException("Mật khẩu và xác nhận mật khẩu không khớp");
+        }
+                user.setPassword(registerBean.getPassword());
         return save(user);
     }
 

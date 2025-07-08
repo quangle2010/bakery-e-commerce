@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { showError, showSuccess } from '../../util/useAlert';
+import Loading from '../../components/common/Loading.vue';
 
 const router = useRouter();
 const registerForm = reactive({
@@ -36,6 +37,9 @@ const validateForm = () => {
         isValid = false;
     } else if (/\d/.test(registerForm.fullName)) {
         errors.fullName = "Họ và tên không được chứa số";
+        isValid = false;
+    } else if (!(/^[a-zA-ZÀ-ỹ\s]+$/u.test(registerForm.fullName))) {
+        errors.fullName = "Họ và tên không được chứa lý tự đặt biệt";
         isValid = false;
     }
 
@@ -80,15 +84,18 @@ const handleRegister = async () => {
         }
     } catch (error: any) {
         if (axios.isAxiosError(error)) {
-            const message = error.response?.data?.message;
-            if (message === "Email đã được sử dụng") {
-                errors.email = message;
+            const errorMessage = error.response?.data?.message;
+            if (errorMessage === "Email không tồn tại") {
+                errors.email = errorMessage;
             }
-            errors.general = error.response?.data?.message || 'Đăng ký thất bại';
+            if (errorMessage === "Email đã được sử dụng") {
+                errors.email = errorMessage;
+            }
         } else {
             errors.general = 'Có lỗi xảy ra. Vui lòng thử lại.';
+            showError(errors.general);
         }
-        showError(errors.general);
+
     } finally {
         isLoading.value = false;
     }
@@ -98,88 +105,92 @@ const handleRegister = async () => {
 
 
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card mb-4 border rounded-4">
-                    <div class="card-header text-center text-white bg-primary py-4 border-0 rounded-top-4">
-                        <h2 class="fw-bold mb-2">Fshop</h2>
-                        <p class="mb-3">Cửa hàng bánh kẹo, bánh ngọt và quà tặng ngọt ngào hàng đầu</p>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            <div class="card mb-4 border rounded-4">
+                <div class="card-header text-center text-white bg-primary py-4 border-0 rounded-top-4">
+                    <h2 class="fw-bold mb-2">Fshop</h2>
+                    <p class="mb-3">Cửa hàng bánh kẹo, bánh ngọt và quà tặng ngọt ngào hàng đầu</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">Đăng ký</h3>
+                        <p class="text-muted">Tạo tài khoản mới tại Fshop!</p>
                     </div>
-                    <div class="card-body p-4">
-                        <div class="text-center mb-4">
-                            <h3 class="fw-bold">Đăng ký</h3>
-                            <p class="text-muted">Tạo tài khoản mới tại Fshop!</p>
+                    <form @submit.prevent="handleRegister">
+
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-person text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" name="fullName"
+                                    placeholder="Họ và tên" v-model="registerForm.fullName">
+                            </div>
+                            <small class="text-danger fw-bold">
+                                {{ errors?.fullName }}
+                            </small>
                         </div>
-                        <form @submit.prevent="handleRegister">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-envelope text-muted"></i>
+                                </span>
+                                <input type="email" class="form-control border-start-0" name="email" placeholder="Email"
+                                    v-model="registerForm.email">
+                            </div>
+                            <small class="text-danger fw-bold">
+                                {{ errors?.email }}
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-lock text-muted"></i>
+                                </span>
+                                <input type="password" class="form-control border-start-0" name="password"
+                                    placeholder="Mật khẩu" v-model="registerForm.password">
+                            </div>
+                            <small class="text-danger fw-bold">
+                                {{ errors?.password }}
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-lock text-muted"></i>
+                                </span>
+                                <input type="password" class="form-control border-start-0" name="confirmPassword"
+                                    placeholder="Xác nhận mật khẩu" v-model="registerForm.confirmPassword">
+                            </div>
+                            <small class="text-danger fw-bold ">
+                                {{ errors?.confirmPassword }}
+                            </small>
+                        </div>
 
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-person text-muted"></i>
-                                    </span>
-                                    <input type="text" class="form-control border-start-0" name="fullName"
-                                        placeholder="Họ và tên" v-model="registerForm.fullName">
-                                </div>
-                                <small class="text-danger fw-bold">
-                                    {{ errors?.fullName }}
-                                </small>
-                            </div>
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-envelope text-muted"></i>
-                                    </span>
-                                    <input type="email" class="form-control border-start-0" name="email"
-                                        placeholder="Email" v-model="registerForm.email">
-                                </div>
-                                <small class="text-danger fw-bold">
-                                    {{ errors?.email }}
-                                </small>
-                            </div>
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-lock text-muted"></i>
-                                    </span>
-                                    <input type="password" class="form-control border-start-0" name="password"
-                                        placeholder="Mật khẩu" v-model="registerForm.password">
-                                </div>
-                                <small class="text-danger fw-bold">
-                                    {{ errors?.password }}
-                                </small>
-                            </div>
-                            <div class="mb-3">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0">
-                                        <i class="bi bi-lock text-muted"></i>
-                                    </span>
-                                    <input type="password" class="form-control border-start-0" name="confirmPassword"
-                                        placeholder="Xác nhận mật khẩu" v-model="registerForm.confirmPassword">
-                                </div>
-                                <small class="text-danger fw-bold ">
-                                    {{ errors?.confirmPassword }}
-                                </small>
-                            </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-sm shadow">
+                                Đăng ký
+                            </button>
+                        </div>
 
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm shadow">
-                                    Đăng ký
-                                </button>
-                            </div>
-
-                            <div class="mt-4 text-center">
-                                <p>
-                                    Đã có tài khoản?
-                                    <router-link to="/login" class="text-decoration-none fw-bold">Đăng
-                                        nhập</router-link>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="mt-4 text-center">
+                            <p>
+                                Đã có tài khoản?
+                                <router-link to="/login" class="text-decoration-none fw-bold">Đăng
+                                    nhập</router-link>
+                            </p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+    <div v-if="isLoading">
+        <Loading />
+    </div>
+
+
 
 </template>
