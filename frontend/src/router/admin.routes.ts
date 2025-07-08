@@ -9,6 +9,7 @@ export const adminRoutes = [
     {
         path: "/admin", 
         component: AdminLayout,
+        meta: { requiresAuth: true, role: 'ROLE_ADMIN' },
         children: [
             { path: "", component: Dashboard },
             { path: "dashboard", component: Dashboard },

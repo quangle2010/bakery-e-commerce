@@ -6,6 +6,7 @@ declare module '*.vue' {
   export default component
 }
 
+
 // Đảm bảo TypeScript nhận diện đối tượng window
 interface Window {
   innerWidth: number;

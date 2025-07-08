@@ -17,8 +17,7 @@
             Bạn có chắc chắn muốn đăng xuất không?
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đăng xuất</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" v-on:click="handleLogout">Đăng xuất</button>
           </div>
         </div>
       </div>
@@ -27,5 +26,14 @@
 </template>
 
 <script setup lang="ts">
-// Không cần script nếu chỉ là modal hiển thị
+import { useAuthStore } from '../../store/auth';
+import { useRouter } from 'vue-router';
+import { showSuccess } from '../../util/useAlert';
+const router=useRouter();
+const auth=useAuthStore();
+const handleLogout = ()=>{
+  auth.logout();
+  router.push("/login");
+  showSuccess("Hẹn gặp lại","Đăng xuất thành công!");
+}
 </script>

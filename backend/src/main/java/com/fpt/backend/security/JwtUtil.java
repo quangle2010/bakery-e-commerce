@@ -1,27 +1,12 @@
 package com.fpt.backend.security;
 
-import java.util.Base64;
 import java.util.Date;
-
-import javax.crypto.SecretKey;
-
 import org.springframework.stereotype.Component;
-
+import com.fpt.backend.util.Constant;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-
-    // Chuỗi secret dạng Base64 (phải là Base64 hợp lệ!)
-    private static final String BASE64_SECRET_KEY = "IUhuQQpG1l3gA5aFf9SjfjRau2WiXYDIORDGWkggqNBIv4aGb5";
-
-    // Giải mã từ Base64 → SecretKey
-    private final SecretKey SIGNING_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(BASE64_SECRET_KEY));
-
-    private static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7; // 7 ngày
-    private static final long EXPIRATION_TIME_RESETPASSWORD = 1000L * 60 * 15; // 15 phút
-    private static final String TYPEJWT_LOGIN = "LOGIN";
 
     public String generateToken(int userId, int roleId, String typeJWT) {
         try {
@@ -31,8 +16,8 @@ public class JwtUtil {
                     .claim("typeJWT", typeJWT)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis()
-                            + (typeJWT.equals(TYPEJWT_LOGIN) ? EXPIRATION_TIME : EXPIRATION_TIME_RESETPASSWORD)))
-                    .signWith(SIGNING_KEY, SignatureAlgorithm.HS256)
+                            + (typeJWT.equals(Constant.TYPEJWT_LOGIN) ? Constant.EXPIRATION_TIME : Constant.EXPIRATION_TIME_RESETPASSWORD)))
+                    .signWith(Constant.SIGNING_KEY, SignatureAlgorithm.HS256)
                     .compact();
         } catch (Exception e) {
             System.err.println("❌ Lỗi khi tạo JWT: " + e.getMessage());
@@ -93,7 +78,7 @@ public class JwtUtil {
 
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SIGNING_KEY)
+                .setSigningKey(Constant.SIGNING_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();

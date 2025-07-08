@@ -1,5 +1,11 @@
 package com.fpt.backend.util;
 
+import java.util.Base64;
+
+import javax.crypto.SecretKey;
+
+import io.jsonwebtoken.security.Keys;
+
 public class Constant {
 
 
@@ -38,4 +44,29 @@ public class Constant {
 
     public static final int FLAVOR = 1; // Hương vị
     public static final int CATEGORY = 2; // Loại
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Chuỗi secret dạng Base64 (phải là Base64 hợp lệ!)
+    public static final String BASE64_SECRET_KEY = "IUhuQQpG1l3gA5aFf9SjfjRau2WiXYDIORDGWkggqNBIv4aGb5";
+
+    // Giải mã từ Base64 → SecretKey
+    public static final SecretKey SIGNING_KEY = Keys.hmacShaKeyFor(Base64.getDecoder().decode(BASE64_SECRET_KEY));
+
+    public static final long EXPIRATION_TIME = 1000L * 60 * 60 * 24 * 7; // 7 ngày
+    public static final long EXPIRATION_TIME_RESETPASSWORD = 1000L * 60 * 15; // 15 phút
+    public static final String TYPEJWT_LOGIN = "LOGIN";
+    public static final String TYPEJWT_RESETPASSWORD = "RESETPASSWORD";
 }

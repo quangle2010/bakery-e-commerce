@@ -1,26 +1,34 @@
+<script setup lang="ts">
+import { useAuthStore } from '../../store/auth';
+import LogoutModal from '../common/LogoutModal.vue';
+const auth = useAuthStore();
+</script>
+
 <template>
   <header>
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: #fff8f0;">
       <div class="container py-2">
-        <router-link class="navbar-brand d-flex align-items-center" to="/home"> 
+        <router-link class="navbar-brand d-flex align-items-center" to="/home">
           <span class="rounded-circle bg-gradient-primary p-2 me-2 d-flex align-items-center justify-content-center"
             style="background: linear-gradient(45deg, #f8a5c2, #fd868c); width: 40px; height: 40px;">
-            <img src="https://cdn-icons-png.flaticon.com/512/2718/2718224.png" alt="Logo" width="24" height="24" class="logo-img">
-          </span> 
-          <span> 
+            <img src="https://cdn-icons-png.flaticon.com/512/2718/2718224.png" alt="Logo" width="24" height="24"
+              class="logo-img">
+          </span>
+          <span>
             <span class="fw-bold h5 mb-0 gradient-text">Fshop</span>
             <div class="text-muted small d-none d-sm-block">Bánh kẹo ngọt ngào mỗi ngày</div>
           </span>
         </router-link>
 
         <div class="d-flex d-lg-none ms-auto me-2">
-          <button class="btn btn-sm btn-outline-secondary border-0" type="button" data-bs-toggle="collapse" 
+          <button class="btn btn-sm btn-outline-secondary border-0" type="button" data-bs-toggle="collapse"
             data-bs-target="#searchCollapse" aria-expanded="false" aria-controls="searchCollapse">
             <i class="bi bi-search"></i>
           </button>
         </div>
 
-        <router-link to="/cart" class="btn btn-sm gradient-button position-relative me-2 d-flex d-lg-none align-items-center">
+        <router-link to="/cart"
+          class="btn btn-sm gradient-button position-relative me-2 d-flex d-lg-none align-items-center">
           <i class="bi bi-cart"></i>
           <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
         </router-link>
@@ -48,19 +56,19 @@
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item mx-2">
               <router-link class="nav-link fw-medium position-relative" to="/products">
-                Sản phẩm 
+                Sản phẩm
                 <span class="nav-link-indicator"></span>
               </router-link>
             </li>
             <li class="nav-item mx-2">
               <router-link class="nav-link fw-medium position-relative" to="/about-us">
-                Về chúng tôi 
+                Về chúng tôi
                 <span class="nav-link-indicator"></span>
               </router-link>
             </li>
             <li class="nav-item mx-2">
               <router-link class="nav-link fw-medium position-relative" to="/contact">
-                Liên hệ 
+                Liên hệ
                 <span class="nav-link-indicator"></span>
               </router-link>
             </li>
@@ -79,47 +87,52 @@
             </form>
 
             <router-link to="/cart" class="btn gradient-button position-relative me-3 d-flex align-items-center">
-              <i class="bi bi-cart"></i> 
-              <span class="ms-2 d-none d-md-inline">Giỏ hàng</span> 
+              <i class="bi bi-cart"></i>
+              <span class="ms-2 d-none d-md-inline">Giỏ hàng</span>
               <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
             </router-link>
 
             <div class="dropdown">
-              <button class="btn gradient-button dropdown-toggle d-flex align-items-center" type="button" id="accountDropdown"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle fs-5 me-md-2"></i> 
+              <button class="btn gradient-button dropdown-toggle d-flex align-items-center" type="button"
+                id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-5 me-md-2"></i>
                 <span class="d-none d-md-inline">Tài khoản</span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 py-2"
                 aria-labelledby="accountDropdown">
-                <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/login"><i
-                      class="bi bi-box-arrow-in-right me-2 text-primary"></i> Đăng nhập</router-link></li>
-                <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/register"><i
-                      class="bi bi-person-plus me-2 text-primary"></i> Đăng ký</router-link></li>
-                <li>
-                  <hr class="dropdown-divider mx-2">
-                </li>
-                <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/user/profile"><i
-                      class="bi bi-person-vcard me-2 text-primary"></i> Thông tin tài
-                    khoản</router-link></li>
-                <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/user/orders"><i
-                      class="bi bi-list-ul me-2 text-primary"></i> Đơn hàng của tôi</router-link></li>
-                <li>
-                  <button type="button" class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all text-danger"
-                    data-bs-toggle="modal" data-bs-target="#logoutModal">
-                    <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                  </button>
-                </li>
+                <div v-if="!auth.isAuthenticated">
+                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/login"><i
+                        class="bi bi-box-arrow-in-right me-2 text-primary"></i> Đăng nhập</router-link></li>
+                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/register"><i
+                        class="bi bi-person-plus me-2 text-primary"></i> Đăng ký</router-link></li>
+                </div>
+
+                <div v-if="auth.isAuthenticated">
+                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all"
+                      to="/user/profile"><i class="bi bi-person-vcard me-2 text-primary"></i> Thông tin tài
+                      khoản</router-link></li>
+                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all"
+                      to="/user/orders"><i class="bi bi-list-ul me-2 text-primary"></i> Đơn hàng của tôi</router-link>
+                  </li>
+                  <li>
+                    <button type="button" class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all text-danger"
+                      data-bs-toggle="modal" data-bs-target="#logoutModal">
+                      <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                    </button>
+                  </li>
+                </div>
               </ul>
             </div>
           </div>
 
           <div class="d-lg-none mt-3">
             <div class="d-flex flex-column">
-              <router-link class="btn btn-outline-primary mb-2 d-flex align-items-center justify-content-center" to="/login">
+              <router-link class="btn btn-outline-primary mb-2 d-flex align-items-center justify-content-center"
+                to="/login">
                 <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập
               </router-link>
-              <router-link class="btn btn-outline-primary mb-3 d-flex align-items-center justify-content-center" to="/register">
+              <router-link class="btn btn-outline-primary mb-3 d-flex align-items-center justify-content-center"
+                to="/register">
                 <i class="bi bi-person-plus me-2"></i> Đăng ký
               </router-link>
               <div class="list-group">
@@ -129,7 +142,7 @@
                 <router-link to="/user/orders" class="list-group-item list-group-item-action border-0 rounded mb-1">
                   <i class="bi bi-list-ul me-2 text-primary"></i> Đơn hàng của tôi
                 </router-link>
-                <button type="button" class="list-group-item list-group-item-action border-0 rounded text-danger" 
+                <button type="button" class="list-group-item list-group-item-action border-0 rounded text-danger"
                   data-bs-toggle="modal" data-bs-target="#logoutModal">
                   <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
                 </button>
@@ -139,12 +152,10 @@
         </div>
       </div>
     </nav>
+    <LogoutModal />
   </header>
 </template>
 
-<script setup lang="ts">
-// Header component logic can be added here
-</script>
 
 <style scoped>
 .gradient-text {
@@ -238,11 +249,11 @@
   .gradient-button {
     padding: 6px 12px;
   }
-  
+
   .list-group-item {
     transition: all 0.3s ease;
   }
-  
+
   .list-group-item:hover {
     background-color: rgba(248, 165, 194, 0.1);
     transform: translateX(5px);

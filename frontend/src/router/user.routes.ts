@@ -12,6 +12,7 @@ export const userRoutes = [
   {
     path: "/",
     component: UserLayout,
+    meta: { requiresAuth: true, role: "ROLE_USER" },
     children: [
       {
         path: "user",
