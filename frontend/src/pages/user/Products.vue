@@ -8,229 +8,126 @@
                 <div class="col">
                     <!-- Hiển thị số lượng sản phẩm và kết quả tìm kiếm -->
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <p class="mb-0 text-muted">Hiển thị <span class="fw-bold">6</span> sản phẩm</p>
+                        <p class="mb-0 text-muted">
+                            {{ displayText }}
+                        </p>
+                        <div class="w-50"> <input type="text" class="form-control" v-model="keyword"
+                                placeholder="Nhập keyword" /></div>
                         <div class="d-flex align-items-center">
-                            <!-- Nút lọc mới -->
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                                data-bs-target="#filterModal">
-                                <i class="bi bi-funnel-fill me-1"></i> Lọc
-                            </button>
+                            <select class="form-select" aria-label="Sắp xếp theo giá">
+                                <option selected value="default">Mặc định</option>
+                                <option value="asc">Giá tăng dần</option>
+                                <option value="desc">Giá giảm dần</option>
+                                <option value="newest">Mới nhất</option>
+                                <option value="popular">Phổ biến nhất</option>
+                            </select>
 
                         </div>
                     </div>
 
-                    <!-- Modal lọc sản phẩm -->
-                    <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="filterModalLabel">Lọc sản phẩm</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- Danh mục sản phẩm - nằm dọc -->
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold">Danh mục</h6>
-                                        <div class="d-flex flex-column">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="cat-all"
-                                                    checked>
-                                                <label class="form-check-label" for="cat-all">
-                                                    Tất cả
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="cat-bread">
-                                                <label class="form-check-label" for="cat-bread">
-                                                    Bánh mì
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" value="" id="cat-cake">
-                                                <label class="form-check-label" for="cat-cake">
-                                                    Bánh ngọt
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="cat-pastry">
-                                                <label class="form-check-label" for="cat-pastry">
-                                                    Bánh ngọt Pháp
-                                                </label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="cat-cookies">
-                                                <label class="form-check-label" for="cat-cookies">
-                                                    Bánh quy
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <!-- Sắp xếp theo giá - combobox -->
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold">Sắp xếp theo giá</h6>
-                                        <select class="form-select" aria-label="Sắp xếp theo giá">
-                                            <option selected value="default">Mặc định</option>
-                                            <option value="asc">Giá tăng dần</option>
-                                            <option value="desc">Giá giảm dần</option>
-                                            <option value="newest">Mới nhất</option>
-                                            <option value="popular">Phổ biến nhất</option>
-                                        </select>
-                                    </div>
 
-                                    <!-- Khoảng giá - radio -->
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold">Khoảng giá</h6>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="priceRange"
-                                                id="price-all" checked>
-                                            <label class="form-check-label" for="price-all">
-                                                Tất cả giá
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="priceRange"
-                                                id="price-under-50">
-                                            <label class="form-check-label" for="price-under-50">
-                                                Dưới 50.000₫
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="priceRange"
-                                                id="price-50-100">
-                                            <label class="form-check-label" for="price-50-100">
-                                                50.000₫ - 100.000₫
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="priceRange"
-                                                id="price-100-200">
-                                            <label class="form-check-label" for="price-100-200">
-                                                100.000₫ - 200.000₫
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="priceRange"
-                                                id="price-over-200">
-                                            <label class="form-check-label" for="price-over-200">
-                                                Trên 200.000₫
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Đóng</button>
-                                    <button type="button" class="btn btn-primary">Áp dụng</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Hiển thị sản phẩm dạng lưới -->
-                    <div class="row  row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-2">
-                        <!-- Sản phẩm 1 -->
-                        <div class="col" v-for="product in products" :key="product.id">
+                    <div class="row  row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        <div class="col" v-for="product in arrays" :key="product.id">
                             <CardProduct :product="product" />
                         </div>
                     </div>
 
-                    <!-- Phân trang -->
-                    <div class="d-flex justify-content-center mt-5">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                  
                 </div>
+               <div v-if="arrays.length>0" >
+                   <Pagination  :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
+               </div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import CardProduct from '../../components/user/CardProduct.vue';
-const products = ref([
-    { 
-        id: 1, 
-        name: 'Bánh Croissant', 
-        price: 45000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/1/300/200', 
-        category: 'bread', 
-        isfavorite: false, 
-        description: 'Bánh Croissant thơm ngon, giòn xốp với hương bơ đặc trưng.'
-    },
-    { 
-        id: 2, 
-        name: 'Bánh Mì Đặc Biệt', 
-        price: 35000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/2/300/200', 
-        category: 'bread', 
-        isfavorite: false, 
-        description: 'Bánh Mì Đặc Biệt với nhân thịt và rau củ tươi ngon.'
-    },
-    { 
-        id: 3, 
-        name: 'Bánh Kem Dâu', 
-        price: 320000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/3/300/200', 
-        category: 'cake', 
-        isfavorite: false, 
-        description: 'Bánh Kem Dâu với lớp kem tươi mát và dâu tươi ngon.'
-    },
-    { 
-        id: 4, 
-        name: 'Cookies Chocolate', 
-        price: 25000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/4/300/200', 
-        category: 'cake', 
-        isfavorite: false, 
-        description: 'Bánh Cookies Chocolate giòn tan với nhiều miếng chocolate đắng.'
-    },
-    { 
-        id: 5, 
-        name: 'Bánh Cupcake Vanilla', 
-        price: 30000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/5/300/200', 
-        category: 'cake', 
-        isfavorite: false, 
-        description: 'Bánh Cupcake Vanilla với lớp kem tươi mát và hương vani thơm ngon.'
-    },
-    { 
-        id: 6, 
-        name: 'Bánh Tiramisu', 
-        price: 55000, 
-        quantity: 1,
-        image: 'https://picsum.photos/seed/6/300/200', 
-        category: 'cake', 
-        isfavorite: true, 
-        description: 'Bánh Tiramisu thơm ngon với vị cà phê đậm đà.'
+import axios from 'axios';
+import Pagination from '../../components/common/Pagination.vue';
+import { useRoute, useRouter } from 'vue-router';
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+    weight: number;
+    isfavorite: boolean;
+    category: string;
+    description: string;
+    createAt: string;
+}
+
+const arrays = ref<Product[]>([]);
+const totalPages = ref(0);
+const totalItems = ref(0);
+const limit = 12;
+
+const router = useRouter();
+const route = useRoute();
+
+const keyword = ref(route.query.keyword?.toString() || '');
+const page = ref(Number(route.query.page) || 1);
+
+const products = async () => {
+    try {
+        const resp = await axios.get(`http://localhost:8080/products/search`, {
+            params: {
+                keyword: keyword.value,
+                page: page.value,
+            },
+        });
+        if (resp.data.status === true) {
+            arrays.value = resp.data.data.array;
+            totalItems.value = resp.data.data.size;
+            totalPages.value = Math.ceil(totalItems.value / limit);
+        } else {
+            arrays.value = [];
+            totalItems.value = 0;
+            totalPages.value = 0;
+            console.warn('API trả về lỗi:', resp.data.message);
+        }
+    } catch (error) {
+        arrays.value = [];
+        totalItems.value = 0;
+        totalPages.value = 0;
+        console.warn('API trả về lỗi:', error);
     }
-]);
+};
+
+watch([keyword, page], () => {
+    router.push({
+        query: {
+            keyword: keyword.value || '',
+            page: page.value !== 1 ? page.value : 1,
+        },
+    });
+    products();
+});
+
+onMounted(() => {
+    products();
+});
+
+const displayText = computed(() => {
+    if (totalItems.value === 0) return 'Không có sản phẩm';
+    if (totalItems.value === 1) return 'Hiển thị 1 sản phẩm';
+
+    const start = (page.value - 1) * limit + 1;
+    const end = Math.min(start + arrays.value.length - 1, totalItems.value);
+
+    if (totalItems.value === arrays.value.length)
+        return `Hiển thị ${arrays.value.length} sản phẩm`;
+
+    return `Hiển thị sản phẩm ${start} đến ${end} trên tổng ${totalItems.value} sản phẩm`;
+});
 </script>
+
 
 <style scoped>
 .banner-section {
@@ -297,6 +194,26 @@ const products = ref([
     background-color: #0d6efd;
     border-color: #0d6efd;
     color: white;
+}
+
+/* Dropdown sắp xếp */
+.sort-dropdown {
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    padding: 5px 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.sort-dropdown select {
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.sort-dropdown select:focus {
+    box-shadow: none;
+    outline: none;
 }
 
 /* Responsive adjustments */
