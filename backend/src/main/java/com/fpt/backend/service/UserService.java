@@ -2,7 +2,7 @@ package com.fpt.backend.service;
 
 import org.springframework.stereotype.Service;
 
-import com.fpt.backend.bean.RegisterBean;
+import com.fpt.backend.bean.ProfileBean;
 // import com.fpt.backend.bean.ChangePasswordBean;
 // import com.fpt.backend.bean.LoginBean;
 // import com.fpt.backend.bean.ProfileBean;
@@ -11,6 +11,7 @@ import com.fpt.backend.entity.User;
 import com.fpt.backend.jpa.UserJpa;
 import com.fpt.backend.mapper.UserMapper;
 import com.fpt.backend.security.JwtUtil;
+import com.fpt.backend.util.FormatCustomerInfo;
 
 import java.util.Map;
 
@@ -27,11 +28,6 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-
-    @Autowired
-    private APIEmailService apiEmailService;
-
-
 
     public User findByEmail(String email) {
         if (email == null || email.isEmpty()) {
@@ -93,22 +89,11 @@ public class UserService {
         return userMapper.toDTO(getUserIsLogin(token));
     }
 
-    public User register(RegisterBean registerBean) {
-        User user = new User();
-        user.setFullName(registerBean.getFullName());
-        user.setEmail(registerBean.getEmail());
-
-        if (!apiEmailService.isEmailVerified(registerBean.getEmail())) {
-               throw new IllegalArgumentException("Email Không tồn tại");
-        }
-        if (checkEmail(registerBean.getEmail()) != null) {
-            throw new IllegalArgumentException("Email đã được sử dụng");
-        }
-        if (!registerBean.isPasswordMatch()) {
-            throw new IllegalArgumentException("Mật khẩu và xác nhận mật khẩu không khớp");
-        }
-                user.setPassword(registerBean.getPassword());
-        return save(user);
+    public void updateProfile(String token, ProfileBean profileBean) {
+        User user = getUserIsLogin(token);
+        user.setFullName(FormatCustomerInfo.customFullName(profileBean.getFullName()));
+        user.setPhone(profileBean.getPhone());
+        user.setAddress(profileBean.getAddress());
+        save(user);
     }
-
 }

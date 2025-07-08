@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { useAuthStore } from '../../store/auth';
+import axiosClient from '../../util/axiosClient';
+import { showError, showSuccess } from '../../util/useAlert';
+import axios from 'axios';
+import Loading from '../../components/common/Loading.vue';
 const auth = useAuthStore();
-const loginForm = reactive({
+const formSubmit = reactive({
     fullName: auth.user?.fullName || '',
-    email: auth.user?.email || '',
     phone: auth.user?.phone || '',
     address: auth?.user?.address || ''
 });
 const errors = reactive({
     fullName: '',
-    email: '',
     phone: '',
     address: '',
     general: ''
@@ -19,37 +21,30 @@ const isLoading = ref(false);
 
 const validateForm = () => {
     let isValid = true;
-
-    // Reset errors
     errors.fullName = '';
-    errors.email = '';
     errors.phone = '';
     errors.address = '';
     errors.general = '';
-
-    // Kiểm tra fullName
-    if (!loginForm.fullName || !loginForm.fullName.trim()) {
-        errors.fullName = 'Vui lòng nhập họ và tên';
+    if (!formSubmit.fullName.trim()) {
+        errors.fullName = "Vui lòng nhập Họ và tên";
+        isValid = false;
+    } else if (/\d/.test(formSubmit.fullName)) {
+        errors.fullName = "Họ và tên không được chứa số";
+        isValid = false;
+    } else if (!(/^[a-zA-ZÀ-ỹ\s]+$/u.test(formSubmit.fullName))) {
+        errors.fullName = "Họ và tên không được chứa lý tự đặt biệt";
         isValid = false;
     }
 
-    // Kiểm tra email
-    if (!loginForm.email || !loginForm.email.trim()) {
-        errors.email = 'Vui lòng nhập email';
-        isValid = false;
-    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(loginForm.email)) {
-        errors.email = 'Email không hợp lệ';
-        isValid = false;
-    }
-
-    // Kiểm tra phoneNumber
-    if (!loginForm.phone || !loginForm.phone.trim()) {
+    if (!formSubmit.phone || !formSubmit.phone.trim()) {
         errors.phone = 'Vui lòng nhập số điện thoại';
         isValid = false;
+    } else if (!(/^0\d{9}$/.test(formSubmit.phone))) {
+        errors.phone = 'Số điện thoại phải gồm 10 số và bắt đầu bằng số 0';
+        isValid = false;
     }
 
-    // Kiểm tra address (nếu cần)
-    if (!loginForm.address || !loginForm.address.trim()) {
+    if (!formSubmit.address || !formSubmit.address.trim()) {
         errors.address = 'Vui lòng nhập địa chỉ';
         isValid = false;
     }
@@ -61,14 +56,32 @@ const handleSubmit = async () => {
     if (!validateForm()) return;
     try {
         isLoading.value = true;
-        
-    } catch (error) {
+        const { data } = await axiosClient.put("/auth", formSubmit);
+        if (data.status === true) {
+            showSuccess("Cập nhật thông tin", data.message);
+        } else {
+            showError("Cập nhật thất bại")
+        }
 
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data?.message;
+            showError(errorMessage);
+        } else {
+            errors.general = 'Có lỗi xảy ra. Vui lòng thử lại.';
+            showError(errors.general);
+        }
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>
 
 <template>
+  <div>
+      <div v-if="isLoading" >
+        <Loading/>
+    </div>
     <div class="card mb-4 border w-100">
         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
             <h6 class="fw-bold">Thông tin tài khoản</h6>
@@ -81,48 +94,37 @@ const handleSubmit = async () => {
                         <span class="input-group-text bg-light border-end-0">
                             <i class="bi bi-person text-muted"></i>
                         </span>
-                        <input type="text" v-model="loginForm.fullName" class="form-control border-start-0"
+                        <input type="text" v-model="formSubmit.fullName" class="form-control border-start-0"
                             name="fullName" placeholder="Họ và tên">
                     </div>
-                    <div v-if="errors.fullName" class="invalid-feedback d-block">
-                        {{ errors.fullName }}
-                    </div>
+                    <small class="text-danger fw-bold">
+                        {{ errors?.fullName }}
+                    </small>
                 </div>
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="bi bi-envelope text-muted"></i>
-                        </span>
-                        <input type="email" v-model="loginForm.email" class="form-control border-start-0" name="email"
-                            placeholder="Email">
-                    </div>
-                    <div v-if="errors.email" class="invalid-feedback d-block">
-                        {{ errors.email }}
-                    </div>
-                </div>
+
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0">
                             <i class="bi bi-telephone text-muted"></i>
                         </span>
-                        <input type="tel" class="form-control border-start-0" v-model="loginForm.phone" name="phone"
+                        <input type="tel" class="form-control border-start-0" v-model="formSubmit.phone" name="phone"
                             placeholder="Số điện thoại">
                     </div>
-                    <div v-if="errors.phone" class="invalid-feedback d-block">
-                        {{ errors.phone }}
-                    </div>
+                    <small class="text-danger fw-bold">
+                        {{ errors?.phone }}
+                    </small>
                 </div>
                 <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-end-0">
                             <i class="bi bi-geo-alt text-muted"></i>
                         </span>
-                        <input type="text" class="form-control border-start-0" v-model="loginForm.address"
+                        <input type="text" class="form-control border-start-0" v-model="formSubmit.address"
                             name="address" placeholder="Địa chỉ">
                     </div>
-                    <div v-if="errors.address" class="invalid-feedback d-block">
-                        {{ errors.address }}
-                    </div>
+                    <small class="text-danger fw-bold">
+                        {{ errors?.address }}
+                    </small>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-sm shadow">
@@ -131,5 +133,6 @@ const handleSubmit = async () => {
             </form>
         </div>
     </div>
+  </div>
 
 </template>

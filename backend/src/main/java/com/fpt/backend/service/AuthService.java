@@ -3,18 +3,19 @@ package com.fpt.backend.service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.fpt.backend.bean.ChangePasswordBean;
 import com.fpt.backend.bean.RegisterBean;
 import com.fpt.backend.entity.User;
 import com.fpt.backend.util.FormatCustomerInfo;
 
 @Service
-public class RegisterService {
+public class AuthService {
 
     private final APIEmailService apiEmailService;
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public RegisterService(APIEmailService apiEmailService, UserService userService,
+    public AuthService(APIEmailService apiEmailService, UserService userService,
             BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.apiEmailService = apiEmailService;
         this.userService = userService;
@@ -37,4 +38,17 @@ public class RegisterService {
         user.setPassword(bCryptPasswordEncoder.encode(registerBean.getPassword()));
         return userService.save(user);
     }
+
+    public User changePassword(String token, ChangePasswordBean changePasswordBean) {
+        User user = userService.getUserIsLogin(token);
+        if (!bCryptPasswordEncoder.matches(changePasswordBean.getPasswordOld(), user.getPassword())) {
+            throw new IllegalArgumentException("Mật khẩu cũ không đúng");
+        }
+        if (!changePasswordBean.isPasswordMatch()) {
+            throw new IllegalArgumentException("Mật khẩu mới và xác nhận mật khẩu mới không khớp");
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(changePasswordBean.getPasswordNew()));
+        return userService.save(user);
+    }
+
 }

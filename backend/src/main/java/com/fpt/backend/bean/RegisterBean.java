@@ -24,7 +24,6 @@ public class RegisterBean {
     private String password;
 
     @NotBlank(message = "Xác nhận mật khẩu không được để trống")
-    @Size(min = 6, max = 50, message = "Mật khẩu phải từ 6 đến 20 ký tự")
     private String confirmPassword;
 
     public boolean isPasswordMatch() {
