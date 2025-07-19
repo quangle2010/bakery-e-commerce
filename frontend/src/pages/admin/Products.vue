@@ -5,9 +5,9 @@
             <small class="text-muted">Danh sách các sản phẩm</small>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-primary">
+            <router-link to="/admin/add-product" class="btn btn-sm btn-primary">
                 <i class="bi bi-plus-circle me-1"></i>Thêm sản phẩm
-            </button>
+            </router-link>
         </div>
     </div>
     <div class="card">
@@ -16,55 +16,36 @@
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th scope="col">Tên danh mục</th>
-                            <th scope="col">Mô tả</th>
+                            <th scope="col">Hình</th>
+                            <th scope="col">Tên sản phẩm</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Giá</th>
                             <th scope="col" class="text-center">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
                         <!-- Example row -->
                         <tr>
-                            <td>Danh mục 1</td>
-                            <td>Mô tả ngắn về danh mục 1</td>
+                            <td>Hình</td>
+                            <td>Sản phẩm 1</td>
+                            <td>10</td>
+                            <td>200000</td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-secondary me-1">
+                                <router-link to="/admin/edit-product/1" >
                                     <i class="bi bi-pencil"></i> Sửa
-                                </button>
+                                </router-link>
                                 <button class="btn btn-sm btn-outline-danger">
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
                             </td>
                         </tr>
-                          <tr>
-                            <td>Danh mục 1</td>
-                            <td>Mô tả ngắn về danh mục 1</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-secondary me-1">
-                                    <i class="bi bi-pencil"></i> Sửa
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i> Xóa
-                                </button>
-                            </td>
-                        </tr>
-                          <tr>
-                            <td>Danh mục 1</td>
-                            <td>Mô tả ngắn về danh mục 1</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-outline-secondary me-1">
-                                    <i class="bi bi-pencil"></i> Sửa
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger">
-                                    <i class="bi bi-trash"></i> Xóa
-                                </button>
-                            </td>
-                        </tr>
+
                         <!-- More rows as needed -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
 </template>
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+</script>

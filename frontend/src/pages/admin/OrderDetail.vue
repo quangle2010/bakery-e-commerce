@@ -99,7 +99,7 @@
 
         <!-- Nút thao tác -->
         <div class="d-flex justify-content-end gap-2">
-            <router-link to="/user/orders" class="btn btn-sm btn-outline-secondary">
+            <router-link to="/admin/orders" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i>Quay lại
             </router-link>
             <button class="btn btn-sm btn-outline-danger">

@@ -35,10 +35,8 @@ import { ref } from 'vue'
 const sidebars = ref([
     { id: 1, path: '/admin/dashboard', icon: "bi bi-layout-text-window ", label: 'Dashboard' },
     { id: 2, path: '/admin/products', icon: "bi bi-box", label: 'Sản phẩm' },
-    { id: 3, path: '/admin/categories', icon: "bi bi-list-ul", label: 'Danh mục' },
-    { id: 4, path: '/admin/orders', icon: "bi bi-cart", label: 'Đơn hàng' },
-    { id: 5, path: '/admin/profile', icon: "bi bi-person-circle", label: 'Thông tin' },
-
+    { id: 3, path: '/admin/orders', icon: "bi bi-cart", label: 'Đơn hàng' },
+    { id: 4, path: '/admin/profile', icon: "bi bi-person-circle", label: 'Thông tin' },
 ])
 
 </script>

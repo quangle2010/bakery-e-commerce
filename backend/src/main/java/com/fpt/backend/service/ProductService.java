@@ -37,6 +37,9 @@ public class ProductService {
        return productJpa.totalItem(keyword);
     }
 
+public Product getProductById(Integer id) {
+        return productJpa.findById(id).orElse(null);
+    }
 
     public Object getProductDTO(int id){
         Product product=productJpa.findById(id).orElseGet(null);

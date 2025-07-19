@@ -2,9 +2,7 @@ package com.fpt.backend.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,13 +23,7 @@ public class ResponseEntityUtil {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseData(false, message, null));
     }
 
-    public static ResponseEntity<ResponseData> FORBIDDEN(String message) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResponseData(false, message, null));
-    }
-
-    public static ResponseEntity<ResponseData> NOT_FOUND(String message) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseData(false, message, null));
-    }
+    
 
     public static ResponseEntity<ResponseData> BAD_REQUEST_BINDING_RESULT(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
@@ -45,8 +37,6 @@ public class ResponseEntityUtil {
                 .body(new ResponseData(false, "Validation failed", errors));
     }
 
-   public static ResponseEntity<ResponseData> Thow(String message) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseData(false, message, null));
-    }
+  
 
 }
