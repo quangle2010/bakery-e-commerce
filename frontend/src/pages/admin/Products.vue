@@ -31,21 +31,43 @@
                             <td>10</td>
                             <td>200000</td>
                             <td class="text-center">
-                                <router-link to="/admin/edit-product/1" >
+                                <router-link to="/admin/edit-product/1">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </router-link>
-                                <button class="btn btn-sm btn-outline-danger">
+                                <button class="btn btn-sm btn-outline-danger" v-on:click="handleOpenDelete(1)">
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
                             </td>
                         </tr>
-
+                        <tr>
+                            <td>Hình</td>
+                            <td>Sản phẩm 1</td>
+                            <td>10</td>
+                            <td>200000</td>
+                            <td class="text-center">
+                                <router-link to="/admin/edit-product/1">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </router-link>
+                                <button class="btn btn-sm btn-outline-danger" v-on:click="handleOpenDelete(2)">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </td>
+                        </tr>
                         <!-- More rows as needed -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+    <DeleteModal  ref="modalRef" />
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
+import { ref } from 'vue';
+import DeleteModal from '../../components/common/DeleteModal.vue';
+
+const modalRef = ref<InstanceType<typeof DeleteModal> | null>(null);
+
+const handleOpenDelete = (id: number) => {
+  modalRef.value?.openModal(id);
+};
 </script>
