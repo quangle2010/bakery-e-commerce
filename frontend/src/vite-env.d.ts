@@ -5,7 +5,6 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
-declare module 'bootstrap';
 
 
 // Đảm bảo TypeScript nhận diện đối tượng window

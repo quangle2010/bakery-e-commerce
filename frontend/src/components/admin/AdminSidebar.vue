@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-sidebar" :class="{ 'collapsed': collapsed }">
+  <div class="admin-sidebar" :class="{ 'collapsed': props.collapsed }">
     <div class="logo-container">
       <div class="logo-wrapper">
         <img src="https://cdn-icons-png.flaticon.com/512/2718/2718224.png" alt="Logo" class="logo-img">
@@ -21,9 +21,7 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
 
-defineProps<{
-  collapsed?: boolean;
-}>();
+const props = defineProps<{ collapsed?: boolean }>();
 
 const route = useRoute();
 

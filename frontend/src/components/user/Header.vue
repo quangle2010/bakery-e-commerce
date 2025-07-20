@@ -100,31 +100,29 @@ const auth = useAuthStore();
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 py-2"
                 aria-labelledby="accountDropdown">
-                <div v-if="!auth.isAuthenticated">
-                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/login"><i
-                        class="bi bi-box-arrow-in-right me-2 text-primary"></i> Đăng nhập</router-link></li>
-                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/register"><i
-                        class="bi bi-person-plus me-2 text-primary"></i> Đăng ký</router-link></li>
-                </div>
-
-                <div v-if="auth.isAuthenticated">
-                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all"
-                      to="/user/profile"><i class="bi bi-person-vcard me-2 text-primary"></i> Thông tin tài
-                      khoản</router-link></li>
-                  <li><router-link class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all"
-                      to="/user/orders"><i class="bi bi-list-ul me-2 text-primary"></i> Đơn hàng của tôi</router-link>
-                  </li>
-                  <li>
-                    <button type="button" class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all text-danger"
-                      data-bs-toggle="modal" data-bs-target="#logoutModal">
-                      <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                    </button>
-                  </li>
-                </div>
+                <li v-if="!auth.isAuthenticated"><router-link
+                    class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/login"><i
+                      class="bi bi-box-arrow-in-right me-2 text-primary"></i> Đăng nhập</router-link></li>
+                <li v-if="!auth.isAuthenticated"><router-link
+                    class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/register"><i
+                      class="bi bi-person-plus me-2 text-primary"></i> Đăng ký</router-link></li>
+                <li v-if="auth.isAuthenticated"><router-link
+                    class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/user/profile"><i
+                      class="bi bi-person-vcard me-2 text-primary"></i> Thông tin tài
+                    khoản</router-link></li>
+                <li v-if="auth.isAuthenticated"><router-link
+                    class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all" to="/user/orders"><i
+                      class="bi bi-list-ul me-2 text-primary"></i> Đơn hàng của tôi</router-link>
+                </li>
+                <li v-if="auth.isAuthenticated">
+                  <button type="button" class="dropdown-item py-2 px-3 rounded-3 mb-1 mx-1 transition-all text-danger"
+                    data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
-
           <div class="d-lg-none mt-3">
             <div class="d-flex flex-column">
               <router-link class="btn btn-outline-primary mb-2 d-flex align-items-center justify-content-center"

@@ -4,9 +4,9 @@ import router from './router'
 import { createPinia } from 'pinia'
 
 // Bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap';  // bắt buộc import js bootstrap mới chạy dropdown
+
 const app = createApp(App)
 
 app.use(createPinia())
