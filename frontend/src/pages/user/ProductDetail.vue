@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import axiosClient from '../../util/axiosClient';
-import { showSuccess } from '../../util/useAlert';
+import { showError, showSuccess } from '../../util/useAlert';
+import axios from 'axios';
+import { useAuthStore } from '../../store/auth';
 
 const route = useRoute();
 
@@ -20,7 +22,7 @@ interface Product {
 }
 const data = ref<Product | null>(null);
 const id = ref(route.params.id);
-
+const quantity = ref(Number(route.query.quantity) || 1);
 const productDetail = async () => {
     try {
         const reps = await axiosClient.get(`/product/${id.value}`)
@@ -41,10 +43,10 @@ const addAndRemoveFavorite = async () => {
         try {
             const response = await axiosClient.post(`/user/favorite?productId=${data.value.id}`);
             if (response.data.status === true) {
-               showSuccess(response.data.message);
-               productDetail();
+                showSuccess(response.data.message);
+                productDetail();
             } else {
-                console.warn('Error toggling favorite:', response.data.message);
+                showError(response.data.message);
             }
         } catch (error) {
             console.error('API error:', error);
@@ -53,8 +55,48 @@ const addAndRemoveFavorite = async () => {
 };
 
 
+
+const auth = useAuthStore();
+
+const addAndUpdateCart = async () => {
+    if (data.value) {
+        try {
+            const response = await axiosClient.post(`/user/cart?productId=${data.value.id}&&quantity=${quantity.value}`);
+            if (response.data.status === true) {
+                showSuccess(response.data.message);
+                productDetail();
+                const cart = Array.isArray(response.data.data) ? response.data.data.length : 0;
+                auth.$patch({
+                    user: { ...auth.user!, cart: cart }
+                });
+            } else {
+                showError(response.data.message);
+                console.warn('Error toggling cart:', response.data.message);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('API error:', error.response?.data || error.message);
+                showError(error.response?.data.message || 'Đã xảy ra lỗi khi cập nhật giỏ hàng');
+            } else {
+                console.error('Unexpected error:', error);
+                showError('Đã xảy ra lỗi không xác định khi cập nhật giỏ hàng');
+            }
+        }
+    }
+};
+
+watch(quantity, (val) => {
+    const max = data.value?.quantity ?? 1;
+
+    if (val < 1) {
+        quantity.value = 1;
+    } else if (val > max) {
+        quantity.value = max;
+    }
+});
 onMounted(() => {
     productDetail();
+  
 });
 </script>
 
@@ -83,14 +125,17 @@ onMounted(() => {
                 <div class="mb-4">
                     <label class="form-label fw-bold mb-2">Số lượng</label>
                     <div class="input-group" style="width: 150px;">
-                        <button class="btn btn-outline-primary" type="button">-</button>
-                        <input type="number" class="form-control text-center fw-bold" value="1" min="1">
-                        <button class="btn btn-outline-primary" type="button">+</button>
+                        <button class="btn btn-outline-primary" type="button"
+                            @click="quantity = Math.max(1, quantity - 1)">-</button>
+                        <input type="number" class="form-control text-center fw-bold" v-model="quantity" min="1"
+                            :disabled="data.quantity <= 1" :max="data.quantity" />
+                        <button class="btn btn-outline-primary" type="button"
+                            @click="quantity = Math.min(data.quantity, quantity + 1)">+</button>
                     </div>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mb-4">
-                    <button class="btn btn-primary px-4 py-2">
+                    <button class="btn btn-primary px-4 py-2" @click="addAndUpdateCart">
                         <i class="bi bi-cart me-2"></i>Thêm vào giỏ hàng
                     </button>
 

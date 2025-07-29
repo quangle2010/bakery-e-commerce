@@ -68,6 +68,6 @@ import DeleteModal from '../../components/common/DeleteModal.vue';
 const modalRef = ref<InstanceType<typeof DeleteModal> | null>(null);
 
 const handleOpenDelete = (id: number) => {
-  modalRef.value?.openModal(id);
+  modalRef.value?.openModal(id, '/api/admin/products');
 };
 </script>

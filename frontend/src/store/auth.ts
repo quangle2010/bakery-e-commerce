@@ -10,6 +10,7 @@ interface User {
   phone: string;
   address: string;
   role: string;
+  cart: number;
 }
 
 interface Auth {
@@ -31,7 +32,7 @@ export const useAuthStore = defineStore("auth", {
           email,
           password,
         });
-        console.log(data)
+        console.log(data);
         if (data.status === true) {
           Cookies.set("token", data.data.token, {
             expires: 7,
@@ -50,7 +51,7 @@ export const useAuthStore = defineStore("auth", {
     async fetchUserInfo() {
       try {
         const { data } = await axiosClient.get("/auth");
-        console.log(data)
+        console.log(data);
         if (data.status === true) {
           this.user = data.data;
           return data.data;
@@ -69,7 +70,6 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async initialize() {
-   
       const token = Cookies.get("token");
       if (token) {
         try {
@@ -84,6 +84,7 @@ export const useAuthStore = defineStore("auth", {
   },
   getters: {
     getUser: (state) => state.user,
+    cartCount: (state) => state.user?.cart ?? 0,
     isLoggedIn: (state) => state.isAuthenticated,
   },
 });

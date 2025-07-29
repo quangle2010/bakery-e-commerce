@@ -19,6 +19,7 @@ public class UserMapper {
         map.put("phone", user.getPhone());
         map.put("address", user.getAddress());
         map.put("role", user.getRole() == 0 ? Constant.ROLE_USER_NAME : Constant.ROLE_ADMIN_NAME);
+        map.put("cart", user.getCartItems().isEmpty() ? 0 : user.getCartItems().size());
         return map;
     }
 }

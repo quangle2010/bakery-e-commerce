@@ -1,12 +1,6 @@
 <template>
   <teleport to="body">
-    <div
-      class="modal fade"
-      id="deleteModal"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      ref="modalRef"
-    >
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" ref="modalRef">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -17,13 +11,8 @@
             Bạn có chắc chắn muốn xóa?
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              @click="confirmDelete"
-            >
-              Xóa
-            </button>
+            <button type="button" class="btn btn-secondary" @click="closeModal">Hủy</button>
+            <button type="button" class="btn btn-danger" @click="confirmDelete">Xóa</button>
           </div>
         </div>
       </div>
@@ -31,47 +20,59 @@
   </teleport>
 </template>
 
-<script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted, defineEmits } from 'vue';
 import { Modal } from 'bootstrap';
+import axiosClient from '../../util/axiosClient';
+import { showError, showSuccess } from '../../util/useAlert';
 
 const modalRef = ref<HTMLElement | null>(null);
 let modalInstance: InstanceType<typeof Modal> | null = null;
 
-const itemId = ref<number | null>(null);
+const emit = defineEmits<{
+  (e: 'deleted'): void;
+}>();
 
-// Setup the modal instance after the DOM is mounted
+const itemId = ref<number | null>(null);
+const deleteUrl = ref<string>('');
+
+// Khởi tạo modal
 onMounted(() => {
   if (modalRef.value) {
     modalInstance = Modal.getOrCreateInstance(modalRef.value);
   }
 });
 
-// Open modal and set item ID
-const openModal = (id: number) => {
+const openModal = (id: number, url: string) => {
   itemId.value = id;
+  deleteUrl.value = url;
   modalInstance?.show();
 };
 
-// Close modal and remove focus
 const closeModal = () => {
-  // Remove focus from the button to avoid accessibility warning
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
-
   modalInstance?.hide();
 };
 
-// Handle delete confirmation
-const confirmDelete = () => {
-  console.log('Xóa ID:', itemId.value);
-  // Call your API or emit event to parent here
-  closeModal(); // Close the modal after action
+const confirmDelete = async () => {
+  try {
+    const response = await axiosClient.delete(`${deleteUrl.value}/${itemId.value}`);
+    if (response.data.status === true) {
+      showSuccess(response.data.message);
+        console.log('deleted emitted');
+      emit('deleted'); // Gửi sự kiện về cha
+    } else {
+      showError(response.data.message);
+    }
+  } catch (error) {
+    showError('Đã xảy ra lỗi khi xóa sản phẩm');
+  }
+  closeModal();
 };
 
-// Expose method for parent components
 defineExpose({
-  openModal,
+  openModal
 });
 </script>

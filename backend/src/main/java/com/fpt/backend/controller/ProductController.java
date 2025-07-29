@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-
 @RestController
 public class ProductController {
     @Autowired
@@ -26,10 +25,10 @@ public class ProductController {
 
     @GetMapping("/products/search")
     public ResponseEntity<ResponseData> getProducts(@RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") int page) {
+            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "default") String option) {
         try {
             Pageable pageable = PageRequest.of(page - 1, 12);
-            List<Object> lists = productService.getProductSearch(keyword, pageable);
+            List<Object> lists = productService.getProductSearch(keyword, pageable, option);
             int total = productService.totalItem(keyword);
             return ResponseEntityUtil.OK("Load thành công", CustomResponse.ARRAYLIST_INT(lists, total));
         } catch (Exception e) {
@@ -38,13 +37,13 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ResponseData>  getMethodName(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String token) {
-       try {
-         return ResponseEntityUtil.OK("Load thành công", productService.getProductDTO(id, token));
-       } catch (Exception e) {
-      return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
-       }
+    public ResponseEntity<ResponseData> getMethodName(@PathVariable int id,
+            @RequestHeader(value = "Authorization", required = false) String token) {
+        try {
+            return ResponseEntityUtil.OK("Load thành công", productService.getProductDTO(id, token));
+        } catch (Exception e) {
+            return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
+        }
     }
-    
 
 }

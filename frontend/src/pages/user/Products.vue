@@ -14,12 +14,10 @@
                         <div class="w-50"> <input type="text" class="form-control" v-model="keyword"
                                 placeholder="Nhập keyword" /></div>
                         <div class="d-flex align-items-center">
-                            <select class="form-select" aria-label="Sắp xếp theo giá">
-                                <option selected value="default">Mặc định</option>
-                                <option value="asc">Giá tăng dần</option>
-                                <option value="desc">Giá giảm dần</option>
-                                <option value="newest">Mới nhất</option>
-                                <option value="popular">Phổ biến nhất</option>
+                            <select class="form-select" aria-label="Sắp xếp theo giá" v-model="option">
+                                <option :selected="option === 'default'" value="default">Mặc định</option>
+                                <option :selected="option === 'asc'" value="asc">Giá tăng dần</option>
+                                <option :selected="option === 'desc'" value="desc">Giá giảm dần</option>
                             </select>
 
                         </div>
@@ -73,13 +71,14 @@ const route = useRoute();
 
 const keyword = ref(route.query.keyword?.toString() || '');
 const page = ref(Number(route.query.page) || 1);
-
+const option = ref(route.query.option?.toString() || 'default');
 const products = async () => {
     try {
         const resp = await axios.get(`http://localhost:8080/products/search`, {
             params: {
-                keyword: keyword.value,
-                page: page.value,
+                keyword: keyword.value || '',
+                page: page.value !== 1 ? page.value : 1,
+                option: option.value || 'default',
             },
         });
         if (resp.data.status === true) {
@@ -100,11 +99,12 @@ const products = async () => {
     }
 };
 
-watch([keyword, page], () => {
+watch([keyword, page, option], () => {
     router.push({
         query: {
             keyword: keyword.value || '',
             page: page.value !== 1 ? page.value : 1,
+            option: option.value || 'default',
         },
     });
     products();

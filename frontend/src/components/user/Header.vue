@@ -2,6 +2,7 @@
 import { useAuthStore } from '../../store/auth';
 import LogoutModal from '../common/LogoutModal.vue';
 const auth = useAuthStore();
+
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const auth = useAuthStore();
         <router-link to="/cart"
           class="btn btn-sm gradient-button position-relative me-2 d-flex d-lg-none align-items-center">
           <i class="bi bi-cart"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"> {{ auth.cartCount }}</span>
         </router-link>
 
         <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
@@ -89,7 +90,7 @@ const auth = useAuthStore();
             <router-link to="/cart" class="btn gradient-button position-relative me-3 d-flex align-items-center">
               <i class="bi bi-cart"></i>
               <span class="ms-2 d-none d-md-inline">Giỏ hàng</span>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"> {{ auth.cartCount }}</span>
             </router-link>
 
             <div class="dropdown">

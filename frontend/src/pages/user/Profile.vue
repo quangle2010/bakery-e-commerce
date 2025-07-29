@@ -78,61 +78,59 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div>
-      <div v-if="isLoading" >
-        <Loading/>
-    </div>
-    <div class="card mb-4 border w-100">
-        <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-            <h6 class="fw-bold">Thông tin tài khoản</h6>
+    <div class="card mb-4 w-100 h-100">
+        <div v-if="isLoading">
+            <Loading />
         </div>
-        <div class="card-body flex-grow-1">
+         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
+                <h6 class="fw-bold">Thông tin tài khoản</h6>
+            </div>
+            <div class="card-body flex-grow-1">
 
-            <form @submit.prevent="handleSubmit">
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="bi bi-person text-muted"></i>
-                        </span>
-                        <input type="text" v-model="formSubmit.fullName" class="form-control border-start-0"
-                            name="fullName" placeholder="Họ và tên">
+                <form @submit.prevent="handleSubmit">
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-person text-muted"></i>
+                            </span>
+                            <input type="text" v-model="formSubmit.fullName" class="form-control border-start-0"
+                                name="fullName" placeholder="Họ và tên">
+                        </div>
+                        <small class="text-danger fw-bold">
+                            {{ errors?.fullName }}
+                        </small>
                     </div>
-                    <small class="text-danger fw-bold">
-                        {{ errors?.fullName }}
-                    </small>
-                </div>
 
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="bi bi-telephone text-muted"></i>
-                        </span>
-                        <input type="tel" class="form-control border-start-0" v-model="formSubmit.phone" name="phone"
-                            placeholder="Số điện thoại">
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-telephone text-muted"></i>
+                            </span>
+                            <input type="tel" class="form-control border-start-0" v-model="formSubmit.phone"
+                                name="phone" placeholder="Số điện thoại">
+                        </div>
+                        <small class="text-danger fw-bold">
+                            {{ errors?.phone }}
+                        </small>
                     </div>
-                    <small class="text-danger fw-bold">
-                        {{ errors?.phone }}
-                    </small>
-                </div>
-                <div class="mb-3">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="bi bi-geo-alt text-muted"></i>
-                        </span>
-                        <input type="text" class="form-control border-start-0" v-model="formSubmit.address"
-                            name="address" placeholder="Địa chỉ">
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-geo-alt text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" v-model="formSubmit.address"
+                                name="address" placeholder="Địa chỉ">
+                        </div>
+                        <small class="text-danger fw-bold">
+                            {{ errors?.address }}
+                        </small>
                     </div>
-                    <small class="text-danger fw-bold">
-                        {{ errors?.address }}
-                    </small>
-                </div>
 
-                <button type="submit" class="btn btn-primary btn-sm shadow">
-                    <i class="bi bi-save me-2"></i>Lưu thông tin
-                </button>
-            </form>
-        </div>
+                    <button type="submit" class="btn btn-primary btn-sm shadow">
+                        <i class="bi bi-save me-2"></i>Lưu thông tin
+                    </button>
+                </form>
+            </div>
     </div>
-  </div>
 
 </template>

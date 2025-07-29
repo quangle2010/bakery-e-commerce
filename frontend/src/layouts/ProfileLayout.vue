@@ -4,6 +4,7 @@
             <Sidebar class="h-100" />
         </div>
         <div class="col-md-8 col-lg-9">
+           
              <router-view class="h-100" />
         </div>
     </div>

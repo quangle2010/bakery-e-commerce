@@ -81,10 +81,11 @@ const handleSubmit = async () => {
 }
 </script>
 <template>
-    <div v-if="isLoading">
-        <Loading />
-    </div>
-    <div class="card mb-4 border w-100">
+
+    <div class="card mb-4 w-100 h-100">
+        <div v-if="isLoading">
+            <Loading />
+        </div>
         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
             <h6 class="fw-bold">Đổi mật khẩu</h6>
         </div>

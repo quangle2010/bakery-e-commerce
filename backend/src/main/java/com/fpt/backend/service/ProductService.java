@@ -1,10 +1,13 @@
 package com.fpt.backend.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fpt.backend.entity.Product;
@@ -20,15 +23,32 @@ public class ProductService {
     @Autowired
     private ProductMapper productMapper;
 
-    public List<Object> getProductSearch(String keyword, Pageable pageable) {
+    public List<Object> getProductSearch(String keyword, Pageable pageable, String option) {
+        Sort sort;
+        switch (option) {
+            case "default":
+            default:
+                sort = Sort.by(Sort.Direction.DESC, "id");
+                break;
+            case "desc":
+                sort = Sort.by(Sort.Direction.DESC, "price");
+                break;
+            case "asc":
+                sort = Sort.by(Sort.Direction.ASC, "price");
+                break;
+        }
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
         Page<Product> products;
         if (keyword == null || keyword.isEmpty()) {
-            products = productJpa.findAll(pageable);
+            products = productJpa.findAll(sortedPageable);
         } else {
-            products = productJpa.findByKeyword(keyword, pageable);
+            products = productJpa.findByKeyword(keyword, sortedPageable);
         }
+
         return products.stream()
-                .map(product -> productMapper.toDTO(product))
+                .map(productMapper::toDTO)
                 .toList();
     }
 
