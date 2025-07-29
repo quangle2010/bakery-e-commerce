@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -37,9 +38,9 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ResponseData>  getMethodName(@PathVariable int id) {
+    public ResponseEntity<ResponseData>  getMethodName(@PathVariable int id, @RequestHeader(value = "Authorization", required = false) String token) {
        try {
-         return ResponseEntityUtil.OK("Load thành công", productService.getProductDTO(id));
+         return ResponseEntityUtil.OK("Load thành công", productService.getProductDTO(id, token));
        } catch (Exception e) {
       return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
        }

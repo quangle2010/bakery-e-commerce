@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fpt.backend.resp.ResponseData;
 import com.fpt.backend.service.CartService;
-import com.fpt.backend.service.UserService;
 import com.fpt.backend.util.ResponseEntityUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;

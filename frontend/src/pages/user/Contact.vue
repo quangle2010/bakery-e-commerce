@@ -32,7 +32,7 @@
                                     <i class="bi bi-geo-alt-fill text-warning fs-4 me-3"></i>
                                     <div>
                                         <h5 class="mb-1">Địa chỉ</h5>
-                                        <p class="mb-0">456 Đường Bánh Ngọt, Quận 2, TP.HCM</p>
+                                        <p class="mb-0">Nhóm ONE - FPT Polytechnic Cần Thơ</p>
                                     </div>
                                 </div>
                             </div>
@@ -41,7 +41,7 @@
                                     <i class="bi bi-telephone-fill text-warning fs-4 me-3"></i>
                                     <div>
                                         <h5 class="mb-1">Điện thoại</h5>
-                                        <a href="tel:+84987654321" class="text-decoration-none">+84 987 654 321</a>
+                                        <a href="tel:+84987654321" class="text-decoration-none">+8470 5555 xxx</a>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                                     <div>
                                         <h5 class="mb-1">Email</h5>
                                         <a href="mailto:contact@fshop.vn"
-                                            class="text-decoration-none">contact@fshop.vn</a>
+                                            class="text-decoration-none">nhomone@gmail.com</a>
                                     </div>
                                 </div>
                             </div>

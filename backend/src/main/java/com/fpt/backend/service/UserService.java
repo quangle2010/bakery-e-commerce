@@ -96,4 +96,13 @@ public class UserService {
         user.setAddress(profileBean.getAddress());
         save(user);
     }
+
+    public boolean isFavorite(String token, Integer productId) {
+        User user = getUserIsLogin(token);
+        if (user == null || productId == null) {
+            return false;
+        }
+        return user.getFavorites().stream()
+                .anyMatch(favorite -> favorite.getProduct().getId() == productId);
+    }
 }

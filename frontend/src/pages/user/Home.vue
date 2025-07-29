@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-4">
           <div class="card border-0 shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1586195831800-24f14c992cea" class="card-img-top" alt="Bánh mì">
+            <img src="https://images.unsplash.com/photo-1587248720327-8eb72564be1e" class="card-img-top" alt="Bánh mì">
             <div class="card-body text-center">
               <h4 class="card-title">Bánh Mì</h4>
               <p class="card-text">Bánh mì tươi mới nướng mỗi ngày</p>
@@ -63,7 +63,7 @@
         <div class="col-md-3 col-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="badge bg-danger position-absolute top-0 end-0 m-2">-15%</div>
-            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587" class="card-img-top" alt="Bánh kem chocolate">
+            <img src="https://i.ibb.co/tT24bxgC/a-1.jpg" class="card-img-top" alt="Bánh kem chocolate">
             <div class="card-body">
               <h5 class="card-title">Bánh Kem Chocolate</h5>
               <div class="d-flex justify-content-between align-items-center mb-2">
@@ -76,7 +76,7 @@
         </div>
         <div class="col-md-3 col-6">
           <div class="card border-0 shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2" class="card-img-top" alt="Bánh Croissant">
+            <img src="https://i.ibb.co/Xx52CLdg/a-2.jpg" class="card-img-top" alt="Bánh Croissant">
             <div class="card-body">
               <h5 class="card-title">Bánh Croissant</h5>
               <div class="d-flex justify-content-between align-items-center mb-2">
@@ -89,7 +89,7 @@
         <div class="col-md-3 col-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="badge bg-success position-absolute top-0 end-0 m-2">Mới</div>
-            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b" class="card-img-top" alt="Cupcake">
+            <img src="https://i.ibb.co/WWyGZhfG/a-3.jpg" class="card-img-top" alt="Cupcake">
             <div class="card-body">
               <h5 class="card-title">Cupcake Dâu</h5>
               <div class="d-flex justify-content-between align-items-center mb-2">
@@ -101,7 +101,7 @@
         </div>
         <div class="col-md-3 col-6">
           <div class="card border-0 shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1587248720327-8eb72564be1e" class="card-img-top" alt="Bánh Tiramisu">
+            <img src="https://i.ibb.co/tTkTvj0k/a-4.jpg" class="card-img-top" alt="Bánh Tiramisu">
             <div class="card-body">
               <h5 class="card-title">Bánh Tiramisu</h5>
               <div class="d-flex justify-content-between align-items-center mb-2">

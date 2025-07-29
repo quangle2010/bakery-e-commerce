@@ -11,7 +11,6 @@ import com.fpt.backend.entity.Product;
 import com.fpt.backend.jpa.ProductJpa;
 import com.fpt.backend.mapper.ProductMapper;
 
-
 @Service
 public class ProductService {
 
@@ -28,22 +27,22 @@ public class ProductService {
         } else {
             products = productJpa.findByKeyword(keyword, pageable);
         }
-        return  products.stream()
-                .map(productMapper::toDTO)
+        return products.stream()
+                .map(product -> productMapper.toDTO(product))
                 .toList();
     }
 
-    public int totalItem(String keyword){
-       return productJpa.totalItem(keyword);
+    public int totalItem(String keyword) {
+        return productJpa.totalItem(keyword);
     }
 
-public Product getProductById(Integer id) {
+    public Product getProductById(Integer id) {
         return productJpa.findById(id).orElse(null);
     }
 
-    public Object getProductDTO(int id){
-        Product product=productJpa.findById(id).orElseGet(null);
-        return productMapper.toDTO(product);
+    public Object getProductDTO(int id, String token) {
+        Product product = productJpa.findById(id).orElseGet(null);
+        return productMapper.toDTODetail(product, token);
     }
 
 }

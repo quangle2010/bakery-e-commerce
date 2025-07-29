@@ -1,5 +1,5 @@
 <template>
-  <nav aria-label="Page navigation" class="text-center my-3">
+  <nav aria-label="Page navigation" class="text-center my-1">
     <ul class="pagination justify-content-center">
       <!-- Trang đầu -->
       <li class="page-item me-1" :class="{ disabled: currentPage === 1 }" @click="handlePageChange(1)">

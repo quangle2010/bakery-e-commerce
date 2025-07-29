@@ -1,3 +1,64 @@
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import axiosClient from '../../util/axiosClient';
+import { showSuccess } from '../../util/useAlert';
+
+const route = useRoute();
+
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+    weight: number;
+    isfavorite: boolean;
+    category: string;
+    description: string;
+    createAt: string;
+}
+const data = ref<Product | null>(null);
+const id = ref(route.params.id);
+
+const productDetail = async () => {
+    try {
+        const reps = await axiosClient.get(`/product/${id.value}`)
+        if (reps.data.status === true) {
+            data.value = reps.data.data;
+        } else {
+            data.value = null;
+        }
+    } catch (error) {
+        data.value = null;
+        console.log(error);
+    }
+
+}
+
+const addAndRemoveFavorite = async () => {
+    if (data.value) {
+        try {
+            const response = await axiosClient.post(`/user/favorite?productId=${data.value.id}`);
+            if (response.data.status === true) {
+               showSuccess(response.data.message);
+               productDetail();
+            } else {
+                console.warn('Error toggling favorite:', response.data.message);
+            }
+        } catch (error) {
+            console.error('API error:', error);
+        }
+    }
+};
+
+
+onMounted(() => {
+    productDetail();
+});
+</script>
+
+
 <template>
     <div class="row" v-if="data">
         <div class="row mb-2">
@@ -21,7 +82,7 @@
 
                 <div class="mb-4">
                     <label class="form-label fw-bold mb-2">Số lượng</label>
-                    <div class="input-group" style="width: 120px;">
+                    <div class="input-group" style="width: 150px;">
                         <button class="btn btn-outline-primary" type="button">-</button>
                         <input type="number" class="form-control text-center fw-bold" value="1" min="1">
                         <button class="btn btn-outline-primary" type="button">+</button>
@@ -33,8 +94,8 @@
                         <i class="bi bi-cart me-2"></i>Thêm vào giỏ hàng
                     </button>
 
-                    <button class="btn btn-outline-danger px-4 py-2">
-                        <i :class="data.isfavorite ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+                    <button class="btn btn-outline-danger px-4 py-2" @click="addAndRemoveFavorite">
+                        <i :class="data.isfavorite ? 'bi bi-heartbreak' : 'bi bi-heart'"></i>
                         {{ data.isfavorite ? 'Bỏ yêu thích' : 'Yêu thích' }}
                     </button>
                 </div>
@@ -100,45 +161,6 @@
 </template>
 
 
-<script lang="ts" setup>
-import axios from 'axios';
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-
-interface Product {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-    weight: number;
-    isfavorite: boolean;
-    category: string;
-    description: string;
-    createAt: string;
-}
-const data = ref<Product | null>(null);
-const id = ref(route.params.id);
-const productDetail = async () => {
-    try {
-        const reps = await axios.get(`http://localhost:8080/product/${id.value}`)
-        if (reps.data.status === true) {
-            data.value = reps.data.data;
-        } else {
-            data.value = null;
-        }
-    } catch (error) {
-        data.value = null;
-        console.log(error);
-    }
-
-}
-onMounted(() => {
-    productDetail();
-});
-</script>
 
 <style scoped>
 .accordion-button:not(.collapsed) {
