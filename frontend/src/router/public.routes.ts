@@ -9,7 +9,7 @@ import Payment from "../pages/user/Payment.vue";
 import ProductDetail from "../pages/user/ProductDetail.vue";
 import Products from "../pages/user/Products.vue";
 import Register from "../pages/user/Register.vue";
-
+import ConfirmAddress from "../pages/user/ConfirmAddress.vue";
 export const publicRoutes = [
   {
     path: "/",
@@ -24,6 +24,7 @@ export const publicRoutes = [
           meta: { requiresAuth: true, role: 'ROLE_USER' },
        },
       { path: "payment", component: Payment,  meta: { requiresAuth: true, role: 'ROLE_USER' }, },
+      { path: "confirm-address", component: ConfirmAddress, meta: { requiresAuth: true, role: 'ROLE_USER' } },
       { path: "register", component: Register },
       { path: "login", component: Login },
       { path: "product-detail/:id", component: ProductDetail },

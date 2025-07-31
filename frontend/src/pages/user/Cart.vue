@@ -15,7 +15,7 @@ interface Product {
   quantity: number;
   weight: number;
   isfavorite: boolean;
-  category: string;
+  category: { id: number; name: string }[];
   createAt: string;
 }
 interface CartItem {
@@ -147,7 +147,9 @@ onMounted(() => {
                     </div>
                     <div>
                       <h6 class="mb-1 fw-medium">{{ item.product.name }}</h6>
-                      <p class="text-muted small m-0">{{ 'loại: ' + item.product.category +' - ' +' Hương vị: ' + item.product.category }}</p>
+                      <p class="text-muted small m-0"> <span class="badge bg-primary me-1"
+                          v-for="(cat, index) in item.product?.category" :key="index">{{
+                            cat.name }}</span></p>
                     </div>
                   </div>
                 </td>

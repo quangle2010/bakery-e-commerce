@@ -105,4 +105,25 @@ public class UserService {
         return user.getFavorites().stream()
                 .anyMatch(favorite -> favorite.getProduct().getId() == productId);
     }
+
+     public boolean updatePhoneAddress(User user, String phone, String address) {
+        boolean updated = false;
+
+        if ((user.getPhone() == null || user.getPhone().isEmpty()) && phone != null && !phone.isBlank()) {
+            user.setPhone(phone.trim());
+            updated = true;
+        }
+
+        if ((user.getAddress() == null || user.getAddress().isEmpty()) && address != null && !address.isBlank()) {
+            user.setAddress(address.trim());
+            updated = true;
+        }
+
+        if (updated) {
+            save(user);
+        }
+
+        return updated;
+    }
+
 }

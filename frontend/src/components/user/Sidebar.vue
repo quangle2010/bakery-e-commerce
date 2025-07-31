@@ -25,7 +25,7 @@ const sidebars = ref([
 }
 </style>
 <template>
-    <div class="card mb-4 w-100 ">
+    <div class="card mb-4 w-100 h-100">
         <div class="d-flex align-items-center p-3 bg-light border-bottom">
             <div class="flex-shrink-0">
                 <span class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"

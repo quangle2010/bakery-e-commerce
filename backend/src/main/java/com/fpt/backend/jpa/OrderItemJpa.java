@@ -6,4 +6,5 @@ import com.fpt.backend.entity.OrderItem;
 
 public interface OrderItemJpa extends JpaRepository<OrderItem,Integer>{
 
+    
 }

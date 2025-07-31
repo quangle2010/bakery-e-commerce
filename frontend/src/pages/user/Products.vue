@@ -56,10 +56,16 @@ interface Product {
     image: string;
     weight: number;
     isfavorite: boolean;
-    category: string;
+    category: [
+        {
+            id: number;
+            name: string;
+        }
+    ];
     description: string;
     createAt: string;
 }
+
 
 const arrays = ref<Product[]>([]);
 const totalPages = ref(0);

@@ -1,3 +1,4 @@
+// stores/authStore.ts
 import Cookies from "js-cookie";
 import { defineStore } from "pinia";
 import axios from "axios";
@@ -11,6 +12,7 @@ interface User {
   address: string;
   role: string;
   cart: number;
+  addressId: number;
 }
 
 interface Auth {
@@ -25,6 +27,7 @@ export const useAuthStore = defineStore("auth", {
     isInitialized: false,
     isAuthenticated: false,
   }),
+
   actions: {
     async login(email: string, password: string) {
       try {
@@ -32,7 +35,6 @@ export const useAuthStore = defineStore("auth", {
           email,
           password,
         });
-        console.log(data);
         if (data.status === true) {
           Cookies.set("token", data.data.token, {
             expires: 7,
@@ -48,10 +50,10 @@ export const useAuthStore = defineStore("auth", {
         this.isInitialized = true;
       }
     },
+
     async fetchUserInfo() {
       try {
         const { data } = await axiosClient.get("/auth");
-        console.log(data);
         if (data.status === true) {
           this.user = data.data;
           return data.data;
@@ -81,10 +83,17 @@ export const useAuthStore = defineStore("auth", {
       }
       this.isInitialized = true;
     },
+    updateAddressId(addressId: number) {
+      if (this.user) {
+        this.user.addressId = addressId;
+      }
+    },
   },
+
   getters: {
     getUser: (state) => state.user,
     cartCount: (state) => state.user?.cart ?? 0,
+    addressId: (state) => state.user?.addressId ?? null,
     isLoggedIn: (state) => state.isAuthenticated,
   },
 });

@@ -11,8 +11,12 @@ import com.fpt.backend.service.UserService;
 
 @Component
 public class ProductMapper {
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AttributeOptionProductMapper attributeOptionProductMapper;
 
     public boolean isFavorite(String token, Integer productId) {
         return userService.isFavorite(token, productId);
@@ -28,7 +32,7 @@ public class ProductMapper {
         map.put("description", product.getDescriptions());
         map.put("createAt", product.getCreateAt());
         map.put("weight", product.getWeight());
-        map.put("category", "cake");
+        map.put("category", attributeOptionProductMapper.toDTO(product.getAttributeOptionProducts()));
         return map;
     }
 
@@ -43,7 +47,7 @@ public class ProductMapper {
         map.put("createAt", product.getCreateAt());
         map.put("weight", product.getWeight());
         map.put("isfavorite", isFavorite(token, product.getId()));
-        map.put("category", "cake");
+       map.put("category", attributeOptionProductMapper.toDTO(product.getAttributeOptionProducts()));
         return map;
     }
 }

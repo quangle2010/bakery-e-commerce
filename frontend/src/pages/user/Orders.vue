@@ -1,198 +1,334 @@
+<script lang="ts" setup>
+
+import { computed, onMounted, ref, watch } from 'vue';
+import axiosClient from '../../util/axiosClient';
+import { useRoute, useRouter } from 'vue-router';
+import Pagination from '../../components/common/Pagination.vue';
+import { showError, showSuccess } from '../../util/useAlert';
+import axios from 'axios';
+export interface Order {
+    id: number;
+    userId: number;
+    fullName: string;
+    phone: string;
+    address: string;
+    cancelOrder: string;
+    totalPrice: number;
+    createAt: string;
+    status: string;
+    statusId: number;
+    paymentStatus: string;
+    paymentMethod: string;
+    orderItems: {
+        id: number;
+        quantity: number;
+        price: number;
+        product: {
+            id: number;
+            name: string;
+            description: string;
+            image: string;
+            price: number;
+            weight: number;
+            quantity: number;
+            createAt: string;
+            category: { id: number; name: string }[];
+        };
+    }[];
+}
+const arrays = ref<Order[]>([]);
+const totalPages = ref(0);
+const totalItems = ref(0);
+const limit = 12;
+const router = useRouter();
+const route = useRoute();
+
+const page = ref(Number(route.query.page) || 1);
+const startDate = ref('');
+const endDate = ref('');
+
+const fetchOrders = async () => {
+    try {
+        const resp = await axiosClient.get('/user/orders',
+            {
+                params: {
+                    page: page.value,
+                    startDate: startDate.value,
+                    endDate: endDate.value,
+                },
+            }
+        ); // Adjust the URL as needed
+        if (resp.data.status === true) {
+            arrays.value = resp.data.data.array;
+            totalItems.value = resp.data.data.size;
+            totalPages.value = Math.ceil(totalItems.value / limit);
+        } else {
+            arrays.value = [];
+            totalItems.value = 0;
+            totalPages.value = 0;
+            console.warn('API trả về lỗi:', resp.data.message);
+        }
+    } catch (error) {
+        arrays.value = [];
+        totalItems.value = 0;
+        totalPages.value = 0;
+        console.error('Error fetching orders:', error);
+    }
+};
+function formatDate(dateStr: string) {
+    return new Date(dateStr).toLocaleDateString('vi-VN')
+}
+
+function formatPrice(price: number) {
+    return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+}
+
+function statusColor(statusId: number): string {
+    switch (statusId) {
+        case -1: return 'bg-warning text-dark';      // Đã hủy
+        case 0: return 'bg-secondary text-light';    // Chờ xác nhận
+        case 1: return 'bg-info text-dark';          // Đã xác nhận
+        case 2: return 'bg-primary text-light';      // Đang giao
+        case 3: return 'bg-success text-light';      // Đã giao
+        default: return 'bg-danger text-light';      // Không xác định
+    }
+}
+
+
+function badgeColor(statusId: number) {
+    return statusColor(statusId)
+}
+
+function statusIcon(statusId: number): string {
+    switch (statusId) {
+        case -1: return 'bi-x-circle';         // Đã hủy
+        case 0: return 'bi-clock';             // Chờ xác nhận
+        case 1: return 'bi-check-circle';      // Đã xác nhận
+        case 2: return 'bi-truck';             // Đang giao
+        case 3: return 'bi-box-seam';          // Đã giao
+        default: return 'bi-question-circle';  // Không xác định
+    }
+}
+
+
+watch([startDate, endDate, page], () => {
+    router.push({
+        query: {
+            startDate: startDate.value || '',
+            endDate: endDate.value || '',
+            page: page.value !== 1 ? page.value : 1,
+        },
+    });
+    fetchOrders();
+});
+onMounted(() => {
+    fetchOrders();
+});
+const displayText = computed(() => {
+    if (totalItems.value === 0) return 'Không có sản phẩm';
+    if (totalItems.value === 1) return 'Hiển thị 1 sản phẩm';
+
+    const start = (page.value - 1) * limit + 1;
+    const end = Math.min(start + arrays.value.length - 1, totalItems.value);
+
+    if (totalItems.value === arrays.value.length)
+        return `Hiển thị ${arrays.value.length} sản phẩm`;
+
+    return `Hiển thị sản phẩm ${start} đến ${end} trên tổng ${totalItems.value} sản phẩm`;
+});
+
+const showCancelModal = ref(false);
+const selectedItem = ref<Order | null>(null);
+const cancelOrder = ref('Đặt nhầm sản phẩm');
+const confirmCancel = (item: Order) => {
+    selectedItem.value = item;
+    showCancelModal.value = true;
+};
+const deleteItem = async () => {
+    if (!selectedItem.value) return;
+
+    try {
+        const response = await axiosClient.post(`/user/order/update-status/${selectedItem.value.id}`, null, {
+            params: {
+                statusId: (selectedItem.value.statusId - 1),
+                cancelReason: cancelOrder.value,
+            },
+        });
+        if (response.data.status === true) {
+            showSuccess(response.data.message);
+
+            selectedItem.value = null;
+            showCancelModal.value = false;
+            fetchOrders();
+        } else {
+            showError(response.data.message);
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('API error:', error.response?.data || error.message);
+            showError(error.response?.data.message || 'Đã xảy ra lỗi ');
+        } else {
+            console.error('Unexpected error:', error);
+            showError('Đã xảy ra lỗi không xác định');
+        }
+    }
+};
+</script>
+
 <template>
-    <div class="card mb-4  w-100">
-        <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-            <h6 class="fw-bold">Đơn hàng của tôi</h6>
+    <div class="h-100">
+        <div class="card mb-4  w-100">
+            <div class="d-flex align-items-center p-4 bg-light border-bottom ">
+                <h6 class="fw-bold">Đơn hàng của tôi {{ displayText }}</h6>
+            </div>
+            <div class="card-body ">
+                <!-- Filter section -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="card bg-light border-0 shadow-sm">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-center mb-2 small">
+                                    <i class="bi bi-funnel text-primary me-1"></i>
+                                    <span class="fw-semibold">Lọc đơn hàng</span>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-white">Từ</span>
+                                            <input type="date" class="form-control" id="fromDate" v-model="startDate">
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-white">Đến</span>
+                                            <input type="date" class="form-control" id="toDate" v-model="endDate">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Orders list -->
+                <!-- Order 1 -->
+                <div v-for="order in arrays" :key="order.id" class="card card_item mb-4 overflow-hidden">
+                    <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div :class="['order-status-indicator me-2', statusColor(order.statusId)]"></div>
+                            <div>
+                                <div class="fw-semibold small">Mã đơn: #ORD{{ order.id }}</div>
+                                <div class="d-flex align-items-center text-muted small">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    <span>{{ formatDate(order.createAt) }}</span>
+                                    <span class="mx-1">•</span>
+                                    <i class="bi bi-person me-1"></i>
+                                    <span>{{ order.fullName }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span :class="['badge rounded-pill px-2 py-1 small', badgeColor(order.statusId)]">
+                            <i class="bi me-1" :class="statusIcon(order.statusId)"></i>{{ order.status }}
+                        </span>
+                    </div>
+
+                    <div class="card-body py-2 px-3">
+                        <div class="row align-items-center">
+                            <div class="col-7">
+                                <div class="small">
+                                    <div class="mb-1">
+                                        <span class="text-muted">Tổng tiền:</span>
+                                        <span class="fw-bold text-danger ms-1">{{ formatPrice(order.totalPrice)
+                                            }}</span>
+                                    </div>
+                                    <div class="text-muted">
+                                        <i class="bi bi-box me-1"></i>{{ order.orderItems.length }} sản phẩm
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5 text-end">
+                                <button class="btn btn-sm btn-outline-danger me-1" v-if="order.statusId === 0"
+                                    @click="confirmCancel(order)">
+                                    <i class="bi bi-x-circle me-1"></i>Hủy
+                                </button>
+                                <router-link :to="`/user/order-detail/${order.id}`" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye me-1"></i>Chi tiết
+                                </router-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="arrays.length > 0">
+                    <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
+                </div>
+
+            </div>
         </div>
-        <div class="card-body p-3">
-            <!-- Filter section -->
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <div class="card bg-light border-0 shadow-sm">
-                        <div class="card-body p-2">
-                            <div class="d-flex align-items-center mb-2 small">
-                                <i class="bi bi-funnel text-primary me-1"></i>
-                                <span class="fw-semibold">Lọc đơn hàng</span>
-                            </div>
-                            <div class="row g-2">
-                                <div class="col-md-4">
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-white">Từ</span>
-                                        <input type="date" class="form-control" id="fromDate">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-white">Đến</span>
-                                        <input type="date" class="form-control" id="toDate">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <button class="btn btn-sm btn-primary w-100">
-                                        <i class="bi bi-search me-1"></i>Tìm kiếm
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+        <div class="modal fade" :class="{ show: showCancelModal }" id="deleteModal" tabindex="-1"
+            aria-labelledby="deleteModalLabel" aria-hidden="true"
+            :style="{ display: showCancelModal ? 'block' : 'none' }">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-sm">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="deleteModalLabel">Xác nhận hủy đơn hàng</h5>
+                        <button type="button" class="btn-close" @click="showCancelModal = false"
+                            aria-label="Close"></button>
                     </div>
-                </div>
-            </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        </div>
 
-            <!-- Status filter tabs -->
-            <div class="nav nav-pills nav-fill mb-3 small">
-                <a href="#all" class="nav-link active py-1 px-2">
-                    <i class="bi bi-list-ul me-1"></i>Tất cả
-                </a>
-                <a href="#pending" class="nav-link py-1 px-2 text-warning">
-                    <i class="bi bi-clock me-1"></i>Chờ xác nhận
-                </a>
-                <a href="#processing" class="nav-link py-1 px-2 text-info">
-                    <i class="bi bi-gear me-1"></i>Đang xử lý
-                </a>
-                <a href="#shipped" class="nav-link py-1 px-2 text-primary">
-                    <i class="bi bi-truck me-1"></i>Đang giao
-                </a>
-                <a href="#completed" class="nav-link py-1 px-2 text-success">
-                    <i class="bi bi-check-circle me-1"></i>Đã giao
-                </a>
-                <a href="#cancelled" class="nav-link py-1 px-2 text-danger">
-                    <i class="bi bi-x-circle me-1"></i>Đã hủy
-                </a>
-            </div>
+                        <p class="text-muted small mt-2">Hành động này không thể hoàn tác.</p>
+                        <div class="form-group text-start">
+                            <label class="form-label fw-bold">Lý do hủy đơn:</label>
 
-            <!-- Orders list -->
-            <!-- Order 1 -->
-            <div class="card  card_item mb-4 overflow-hidden">
-                <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="order-status-indicator bg-warning me-2"></div>
-                        <div>
-                            <div class="fw-semibold small">Mã đơn: #ORD12345</div>
-                            <div class="d-flex align-items-center text-muted small">
-                                <i class="bi bi-calendar3 me-1"></i>
-                                <span>15/07/2023</span>
-                                <span class="mx-1">•</span>
-                                <i class="bi bi-person me-1"></i>
-                                <span>Nguyễn Văn A</span>
+                            <!-- Các lý do có sẵn -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder"
+                                    value="Đặt nhầm sản phẩm" id="reason1" required>
+                                <label class="form-check-label" for="reason1">Đặt nhầm sản phẩm</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder"
+                                    value="Thay đổi địa chỉ giao hàng" id="reason2">
+                                <label class="form-check-label" for="reason2">Thay đổi địa chỉ giao hàng</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder"
+                                    value="Giá sản phẩm không phù hợp" id="reason4">
+                                <label class="form-check-label" for="reason4">Giá sản phẩm không phù hợp</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder"
+                                    value="Tìm thấy sản phẩm rẻ hơn" id="reason5">
+                                <label class="form-check-label" for="reason5">Tìm thấy sản phẩm rẻ hơn</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder"
+                                    value="Không còn nhu cầu mua" id="reason6">
+                                <label class="form-check-label" for="reason6">Không còn nhu cầu mua</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" v-model="cancelOrder" value="Lý do khác"
+                                    id="reason7">
+                                <label class="form-check-label" for="reason7">Lý do khác</label>
                             </div>
                         </div>
-                    </div>
-                    <span class="badge bg-warning rounded-pill px-2 py-1 small">
-                        <i class="bi bi-clock me-1"></i>Chờ xác nhận
-                    </span>
-                </div>
-                <div class="card-body py-2 px-3">
-                    <div class="row align-items-center">
-                        <div class="col-7">
-                            <div class="small">
-                                <div class="mb-1">
-                                    <span class="text-muted">Tổng tiền:</span>
-                                    <span class="fw-bold text-danger ms-1">350.000₫</span>
-                                </div>
-                                <div class="text-muted">
-                                    <i class="bi bi-box me-1"></i>2 sản phẩm
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-5 text-end">
-                            <button class="btn btn-sm btn-outline-danger me-1">
-                                <i class="bi bi-x-circle me-1"></i>Hủy
-                            </button>
-                            <a th:href="@{/user/order-detail}" class="btn btn-sm btn-primary">
-                                <i class="bi bi-eye me-1"></i>Chi tiết
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Order 2 -->
-            <div class="card card_item mb-4 overflow-hidden">
-                <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="order-status-indicator bg-primary me-2"></div>
-                        <div>
-                            <div class="fw-semibold small">Mã đơn: #ORD12346</div>
-                            <div class="d-flex align-items-center text-muted small">
-                                <i class="bi bi-calendar3 me-1"></i>
-                                <span>10/07/2023</span>
-                                <span class="mx-1">•</span>
-                                <i class="bi bi-person me-1"></i>
-                                <span>Trần Thị B</span>
-                            </div>
-                        </div>
                     </div>
-                    <span class="badge bg-primary rounded-pill px-2 py-1 small">
-                        <i class="bi bi-truck me-1"></i>Đang giao
-                    </span>
-                </div>
-                <div class="card-body py-2 px-3">
-                    <div class="row align-items-center">
-                        <div class="col-7">
-                            <div class="small">
-                                <div class="mb-1">
-                                    <span class="text-muted">Tổng tiền:</span>
-                                    <span class="fw-bold text-danger ms-1">280.000₫</span>
-                                </div>
-                                <div class="text-muted">
-                                    <i class="bi bi-box me-1"></i>1 sản phẩm
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-5 text-end">
-                            <a th:href="@{/user/order-detail}" class="btn btn-sm btn-primary">
-                                <i class="bi bi-eye me-1"></i>Chi tiết
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Order 3 -->
-            <div class="card  card_item mb-4 overflow-hidden">
-                <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <div class="order-status-indicator bg-success me-2"></div>
-                        <div>
-                            <div class="fw-semibold small">Mã đơn: #ORD12340</div>
-                            <div class="d-flex align-items-center text-muted small">
-                                <i class="bi bi-calendar3 me-1"></i>
-                                <span>05/07/2023</span>
-                                <span class="mx-1">•</span>
-                                <i class="bi bi-person me-1"></i>
-                                <span>Lê Văn C</span>
-                            </div>
-                        </div>
-                    </div>
-                    <span class="badge bg-success rounded-pill px-2 py-1 small">
-                        <i class="bi bi-check-circle me-1"></i>Đã giao
-                    </span>
-                </div>
-                <div class="card-body py-2 px-3">
-                    <div class="row align-items-center">
-                        <div class="col-7">
-                            <div class="small">
-                                <div class="mb-1">
-                                    <span class="text-muted">Tổng tiền:</span>
-                                    <span class="fw-bold text-danger ms-1">180.000₫</span>
-                                </div>
-                                <div class="text-muted">
-                                    <i class="bi bi-box me-1"></i>6 sản phẩm
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-5 text-end">
-                            <a th:href="@{/user/order-detail}" class="btn btn-sm btn-primary">
-                                <i class="bi bi-eye me-1"></i>Chi tiết
-                            </a>
-                        </div>
+                    <div class="modal-footer border-0 justify-content-center pt-0">
+                        <button type="button" class="btn btn-danger rounded-pill px-4" @click="deleteItem">
+                            <i class="bi bi-trash me-1"></i> Xác nhận hủy
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="modal-backdrop fade" :class="{ show: showCancelModal }"
+            :style="{ display: showCancelModal ? 'block' : 'none' }"></div>
     </div>
 </template>
-
-<script lang="ts" setup></script>
 
 <style scoped>
 .card_item {

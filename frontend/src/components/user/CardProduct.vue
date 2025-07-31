@@ -1,12 +1,12 @@
 <template>
     <div class="card h-100 card_item" @click="$router.push(`/product-detail/${product.id}`)">
         <img :src="product.image" class="card-img-top" alt="Cookies Chocolate"
-                style="height: 200px; object-fit: cover;">
+            style="height: 200px; object-fit: cover;">
         <div class="card-body">
             <h5 class="card-title product_name mb-0" :title="product.name">{{ product.name }}</h5>
-            <span class="badge bg-primary my-1">{{ product.category }}</span>
+            <span class="badge bg-primary me-1" v-for="(cat, index) in product.category" :key="index">{{ cat.name }}</span>
             <p class="card-text text-danger fw-bold fs-5">
-              {{ formatPrice(product.price) }}
+                {{ formatPrice(product.price) }}
             </p>
         </div>
     </div>
@@ -22,7 +22,12 @@ defineProps<{
         description: string;
         image: string;
         isfavorite: boolean;
-        category: string;
+        category: [
+            {
+                id: number;
+                name: string;
+            }
+        ];
     };
 }>();
 const formatPrice = (price: number) =>

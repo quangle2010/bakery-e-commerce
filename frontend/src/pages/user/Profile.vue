@@ -32,7 +32,7 @@ const validateForm = () => {
         errors.fullName = "Họ và tên không được chứa số";
         isValid = false;
     } else if (!(/^[a-zA-ZÀ-ỹ\s]+$/u.test(formSubmit.fullName))) {
-        errors.fullName = "Họ và tên không được chứa lý tự đặt biệt";
+        errors.fullName = "Họ và tên không được chứa lý tự đặc  biệt";
         isValid = false;
     }
 
@@ -48,7 +48,6 @@ const validateForm = () => {
         errors.address = 'Vui lòng nhập địa chỉ';
         isValid = false;
     }
-
     return isValid;
 };
 

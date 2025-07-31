@@ -16,7 +16,7 @@ interface Product {
     image: string;
     weight: number;
     isfavorite: boolean;
-    category: string;
+    category: { id: number; name: string }[];
     description: string;
     createAt: string;
 }
@@ -96,7 +96,7 @@ watch(quantity, (val) => {
 });
 onMounted(() => {
     productDetail();
-  
+
 });
 </script>
 
@@ -114,9 +114,9 @@ onMounted(() => {
             <!-- Thông tin sản phẩm -->
             <div class="col-md-7">
                 <h2 class="mb-2 fw-bold">{{ data.name }}</h2>
-                <div class="mb-3">
-                    <span class="badge bg-primary me-1">{{ data.category }}</span>
-                </div>
+                <p class="text-muted small m-0"> <span class="badge bg-primary me-1"
+                        v-for="(cat, index) in data.category" :key="index">{{
+                            cat.name }}</span></p>
 
                 <div class="mb-4">
                     <h3 class="text-primary fw-bold">{{ data.price.toLocaleString() }}₫</h3>
@@ -171,9 +171,9 @@ onMounted(() => {
                                             <th width="30%">Tên sản phẩm</th>
                                             <td>{{ data.name }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Danh mục</th>
-                                            <td>{{ data.category }}</td>
+                                        <tr v-for="(cat, index) in data.category" :key="index">
+                                            <th>{{ index === 0 ? 'Loại bánh' : 'Hương vị' }}</th>
+                                            <td>{{ cat.name }}</td>
                                         </tr>
                                         <tr>
                                             <th>Khối lượng</th>

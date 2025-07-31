@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.fpt.backend.entity.Address;
 import com.fpt.backend.entity.User;
 import com.fpt.backend.util.Constant;
 
@@ -20,6 +21,11 @@ public class UserMapper {
         map.put("address", user.getAddress());
         map.put("role", user.getRole() == 0 ? Constant.ROLE_USER_NAME : Constant.ROLE_ADMIN_NAME);
         map.put("cart", user.getCartItems().isEmpty() ? 0 : user.getCartItems().size());
+        map.put("addressId", user.getAddresses().stream()
+                .filter(Address::isDefault)
+                .findFirst()
+                .map(Address::getId)
+                .orElse(null));
         return map;
     }
 }

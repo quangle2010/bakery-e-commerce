@@ -1,5 +1,5 @@
 <template>
-    <div class="card mb-4  w-100">
+    <div class="card mb-4  w-100 h-100">
         <div class="d-flex align-items-center justify-content-between p-4 bg-light border-bottom ">
             <div class="fw-bold">Danh sách sản phẩm yêu thích {{ displayText }}</div>
         </div>

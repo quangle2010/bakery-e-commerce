@@ -1,22 +1,24 @@
 package com.fpt.backend.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fpt.backend.entity.CartItem;
+import com.fpt.backend.entity.Order;
+import com.fpt.backend.entity.OrderItem;
 import com.fpt.backend.entity.Product;
 import com.fpt.backend.entity.User;
-import com.fpt.backend.jpa.AddressJpa;
 import com.fpt.backend.jpa.CartItemJpa;
+import com.fpt.backend.jpa.OrderItemJpa;
 import com.fpt.backend.mapper.CartItemMapper;
+import com.fpt.backend.util.Constant;
 
 @Service
 public class CartService {
 
-    private final AddressJpa addressJpa;
-    
     @Autowired
     private UserService userService;
 
@@ -29,9 +31,11 @@ public class CartService {
     @Autowired
     private CartItemJpa cartItemJpa;
 
-    CartService(AddressJpa addressJpa) {
-        this.addressJpa = addressJpa;
-    }
+    @Autowired
+    private OrderItemJpa orderItemJpa;
+
+    @Autowired
+    private OrderService orderService;
 
     public Object getCartByUser(String token) {
         User user = userService.getUserIsLogin(token);
@@ -53,7 +57,7 @@ public class CartService {
 
         User user = userService.getUserIsLogin(token);
         if (user == null) {
-          throw new IllegalArgumentException("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
+            throw new IllegalArgumentException("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
         }
         Product product = productService.getProductById(productId);
 
@@ -97,4 +101,37 @@ public class CartService {
         }
         return false;
     }
+
+    public Order payment(String token, String fullName, String phone, String address, int paymentMethod) {
+        User user = userService.getUserIsLogin(token);
+        boolean updated = userService.updatePhoneAddress(user, phone, address);
+        if (updated) {
+            System.out.println("User info updated before payment.");
+        }
+        Order order = new Order();
+        if (paymentMethod == 0) {
+            order.setPaymentMethod(Constant.ORDER_PAYMENT_COD);
+        } else {
+            order.setPaymentMethod(Constant.ORDER_PAYMENT_ONLINE);
+        }
+
+        order.setPaymentStatus(Constant.ORDER_PAYMENT_STATUS_PENDING);
+        order.setStatus(Constant.ORDER_STATUS_PENDING);
+        order.setUserInfo(fullName + " -  " + phone + " - " + address);
+        order.setUser(user);
+        order.setCreateAt(new Date());
+        Order saved = orderService.save(order);
+        for (CartItem item : user.getCartItems()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(item.getProduct());
+            orderItem.setQuantity(item.getQuantity());
+            orderItem.setPrice(item.getProduct().getPrice());
+            orderItem.setOrder(saved);
+            orderItemJpa.save(orderItem);
+            cartItemJpa.delete(item);
+        }
+
+        return saved;
+    }
+
 }
