@@ -2,7 +2,6 @@ package com.fpt.backend.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fpt.backend.entity.Order;
 import com.fpt.backend.resp.ResponseData;
 import com.fpt.backend.service.CartService;
 import com.fpt.backend.util.ResponseEntityUtil;
