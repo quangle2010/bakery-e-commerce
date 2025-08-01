@@ -19,6 +19,9 @@ public class ProductMapper {
     private AttributeOptionProductMapper attributeOptionProductMapper;
 
     public boolean isFavorite(String token, Integer productId) {
+        if (token==null|| token.isEmpty()) {
+            return false;
+        }
         return userService.isFavorite(token, productId);
     }
 

@@ -7,10 +7,7 @@
 
     </div>
     <div class="navbar-right">
-      <div class="search-box d-none d-md-block">
-        <input type="text" placeholder="Tìm kiếm..." />
-        <i class="bi bi-search"></i>
-      </div>
+    
 
       <div class="user-dropdown">
         <div class="user-info">

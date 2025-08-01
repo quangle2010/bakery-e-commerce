@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,6 +37,7 @@ public class Order {
     private int status;
     private String paymentStatus;
     private int paymentMethod;
+    @Temporal(TemporalType.DATE)
     private Date createAt;
 
     @OneToMany(mappedBy = "order")

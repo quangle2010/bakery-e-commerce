@@ -290,8 +290,6 @@ function statusIcon(statusId: number): string {
                         <p class="text-muted small mt-2">Hành động này không thể hoàn tác.</p>
                         <div class="form-group text-start">
                             <label class="form-label fw-bold">Lý do hủy đơn:</label>
-
-                           
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" v-model="cancelOrder"
                                     value="Sản phẩm đã hết hàng" id="reason6">

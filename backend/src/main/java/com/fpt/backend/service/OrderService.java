@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.fpt.backend.bean.ProductSellBean;
 import com.fpt.backend.entity.Order;
 import com.fpt.backend.entity.OrderItem;
 import com.fpt.backend.entity.Product;
@@ -60,8 +61,9 @@ public class OrderService {
         int userId = user.getId();
         return orderJpa.countByUserIdAndCreateAtRange(userId, startDate, endDate);
     }
- public List<Object> findByCreateAtRange(String token, Date startDate, Date endDate, Pageable pageable) {
-       
+
+    public List<Object> findByCreateAtRange(String token, Date startDate, Date endDate, Pageable pageable) {
+
         Page<Order> oPages = orderJpa.findByCreateAtRange(startDate, endDate, pageable);
 
         return oPages.getContent().stream() // ✅
@@ -111,8 +113,6 @@ public class OrderService {
         Order order = orderJpa.findByOrderUserId(user.getId(), id).orElseGet(null);
         return orderMapper.mapToOrderResponse(order);
     }
-
-   
 
     public boolean updateOrderStatus(int orderId, int newStatus, String cancelReason) {
         Order order = findById(orderId);
@@ -169,8 +169,10 @@ public class OrderService {
                 || (currentStatus == Constant.ORDER_STATUS_SHIPPING && newStatus == Constant.ORDER_STATUS_COMPLETED);
     }
 
-    // public List<ProductSellBean> findTop5ProductSell(Date starDate , Date
-    // endDate) {
-    // return orderJpa.getTop5ProductSell(starDate, endDate);
-    // }
+    public List<ProductSellBean> findTop5ProductSell(Date startDate, Date endDate) {
+        return orderJpa.findTop5ProductSell(startDate, endDate)
+                .stream()
+                .limit(5)
+                .collect(Collectors.toList());
+    }
 }

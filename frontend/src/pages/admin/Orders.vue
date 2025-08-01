@@ -178,7 +178,7 @@ const deleteItem = async () => {
 <template>
     <div class="card mb-4 h-100 w-100">
         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-            <h6 class="fw-bold">Đơn hàng của tôi {{ displayText }}</h6>
+            <h6 class="fw-bold">Đơn hàng  {{ displayText }}</h6>
         </div>
         <div class="card-body">
             <!-- Filter section -->
