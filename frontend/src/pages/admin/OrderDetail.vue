@@ -54,24 +54,29 @@ const fetchOrderDetail = async () => {
 };
 const cancelOrder = ref('Đặt nhầm sản phẩm');
 const showCancelModal = ref(false);
+const showUpdateStatusModal = ref(false);
 const selectedItem = ref<Order | null>(null);
 
 const confirmCancel = (item: Order) => {
     selectedItem.value = item;
     showCancelModal.value = true;
 };
-
+const confirmUpdateStatus = (item: Order) => {
+    selectedItem.value = item;
+    showUpdateStatusModal.value = true;
+};
 onMounted(() => {
     fetchOrderDetail();
 });
 
-const deleteItem = async () => {
+
+const updateOrder = async (statusId: number) => {
     if (!selectedItem.value) return;
 
     try {
         const response = await axiosClient.post(`/admin/order/update-status/${selectedItem.value.id}`, null, {
             params: {
-                statusId: (selectedItem.value.statusId - 1),
+                statusId: statusId,
                 cancelReason: cancelOrder.value,
             },
         });
@@ -80,7 +85,8 @@ const deleteItem = async () => {
 
             selectedItem.value = null;
             showCancelModal.value = false;
-            await fetchOrderDetail();
+            showUpdateStatusModal.value = false;
+            fetchOrderDetail();
         } else {
             showError(response.data.message);
         }
@@ -94,6 +100,17 @@ const deleteItem = async () => {
         }
     }
 };
+const stringStatus = (statusId: number): string => {
+    switch (statusId) {
+        case -1: return 'Đã hủy';
+        case 0: return 'Chờ xác nhận';
+        case 1: return 'Đã xác nhận';
+        case 2: return 'Đang giao';
+        case 3: return 'Đã giao';
+        default: return 'Không xác định';
+    }
+};
+
 function formatPrice(price: number) {
     return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 }
@@ -227,7 +244,7 @@ function statusIcon(statusId: number): string {
                                                 <img :src="item.product.image" alt="ảnh sản phẩm" class="me-2"
                                                     style="width: 50px; height: 50px; object-fit: cover;" />
                                                 <div>
-                                                    <router-link :to="`/product-detail/${item.product.id}`"
+                                                    <router-link :to="`/admin/edit-product/${item.product.id}`"
                                                         class="text-decoration-none">
                                                         <p class="mb-0 small">{{ item.product.name }}</p>
                                                     </router-link>
@@ -264,6 +281,11 @@ function statusIcon(statusId: number): string {
                         @click="confirmCancel(orderDetail)">
                         <i class="bi bi-x-circle me-1"></i>Hủy đơn hàng
                     </button>
+                    <button class="btn btn-sm btn-outline-success me-1"
+                        v-if="orderDetail.statusId >= 0 && orderDetail.statusId < 3"
+                        @click="confirmUpdateStatus(orderDetail)">
+                        <i class="bi bi-check me-1"></i>Chuển sang trạng thái tiếp theo
+                    </button>
                 </div>
             </div>
         </div>
@@ -272,7 +294,7 @@ function statusIcon(statusId: number): string {
             <div class="spinner-border text-primary mb-3" role="status"></div>
             <p class="text-muted">Đang tải chi tiết đơn hàng...</p>
         </div>
-        <div class="modal fade" :class="{ show: showCancelModal }" id="deleteModal" tabindex="-1"
+        <div class="modal fade" v-if="selectedItem" :class="{ show: showCancelModal }" id="deleteModal" tabindex="-1"
             aria-labelledby="deleteModalLabel" aria-hidden="true"
             :style="{ display: showCancelModal ? 'block' : 'none' }">
             <div class="modal-dialog modal-dialog-centered">
@@ -304,7 +326,8 @@ function statusIcon(statusId: number): string {
 
                     </div>
                     <div class="modal-footer border-0 justify-content-center pt-0">
-                        <button type="button" class="btn btn-danger rounded-pill px-4" @click="deleteItem">
+                        <button type="button" class="btn btn-danger rounded-pill px-4"
+                            @click="updateOrder((selectedItem.statusId - 1))">
                             <i class="bi bi-trash me-1"></i> Xác nhận hủy
                         </button>
                     </div>
@@ -313,5 +336,55 @@ function statusIcon(statusId: number): string {
         </div>
         <div class="modal-backdrop fade" :class="{ show: showCancelModal }"
             :style="{ display: showCancelModal ? 'block' : 'none' }"></div>
+
+        <div class="modal fade" v-if="selectedItem" :class="{ show: showUpdateStatusModal }" id="updateStatusModal"
+            tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true"
+            :style="{ display: showUpdateStatusModal ? 'block' : 'none' }">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-sm">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="updateStatusModalLabel">Xác nhận chuyển trạng thái đơn hàng
+                            #ORD{{ selectedItem?.id }}</h5>
+                        <button type="button" class="btn-close" @click="showUpdateStatusModal = false"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        </div>
+
+                        <p class="text-muted small mt-2">Hành động này không thể hoàn tác.</p>
+                        <div>
+                            Xác nhận chuyển trạng thái đơn hàng từ
+                            <p class="fs-5">
+                                <span
+                                    :class="['badge rounded-pill px-2 py-1 small', badgeColor(selectedItem?.statusId)]">
+
+                                    {{ stringStatus(selectedItem?.statusId) }}
+
+                                </span>
+                                ->
+                                <span
+                                    :class="['badge rounded-pill px-2 py-1 small', badgeColor((selectedItem?.statusId + 1))]">
+                                    {{ stringStatus((selectedItem?.statusId + 1)) }}
+
+                                </span>
+                            </p>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pt-0">
+                        <button type="button" class="btn btn-success rounded-pill px-4"
+                            @click="updateOrder((selectedItem?.statusId + 1))">
+                            <i class="bi bi-check me-1"></i> Xác nhận chuyển
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade" :class="{ show: showUpdateStatusModal }"
+            :style="{ display: showUpdateStatusModal ? 'block' : 'none' }"></div>
     </div>
 </template>

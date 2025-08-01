@@ -158,7 +158,7 @@ public class OrderService {
                 return false;
             }
             product.setQuantity(product.getQuantity() - quantityOrdered);
-            // productService.save(product);
+            productService.save(product);
         }
         return true;
     }

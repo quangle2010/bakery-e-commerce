@@ -64,8 +64,11 @@ public class ProductService {
         return productMapper.toDTODetail(product, token);
     }
 
-
-    public int getAllProducts(){
+    public int getAllProducts() {
         return productJpa.findAll().size();
+    }
+
+    public Product save(Product product) {
+        return productJpa.save(product);
     }
 }

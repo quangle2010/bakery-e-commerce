@@ -109,6 +109,16 @@ function statusIcon(statusId: number): string {
         default: return 'bi-question-circle';  // Không xác định
     }
 }
+const stringStatus = (statusId: number): string => {
+    switch (statusId) {
+        case -1: return 'Đã hủy';
+        case 0: return 'Chờ xác nhận';
+        case 1: return 'Đã xác nhận';
+        case 2: return 'Đang giao';
+        case 3: return 'Đã giao';
+        default: return 'Không xác định';
+    }
+};
 
 
 watch([startDate, endDate, page], () => {
@@ -138,19 +148,26 @@ const displayText = computed(() => {
 });
 
 const showCancelModal = ref(false);
+const showUpdateStatusModal = ref(false);
 const selectedItem = ref<Order | null>(null);
-const cancelOrder = ref('Đặt nhầm sản phẩm');
+const cancelOrder = ref('Sản phẩm đã hết hàng');
 const confirmCancel = (item: Order) => {
     selectedItem.value = item;
     showCancelModal.value = true;
 };
-const deleteItem = async () => {
+
+const confirmUpdateStatus = (item: Order) => {
+    selectedItem.value = item;
+    showUpdateStatusModal.value = true;
+};
+
+const updateOrder = async (statusId: number) => {
     if (!selectedItem.value) return;
 
     try {
         const response = await axiosClient.post(`/admin/order/update-status/${selectedItem.value.id}`, null, {
             params: {
-                statusId: (selectedItem.value.statusId - 1),
+                statusId: statusId,
                 cancelReason: cancelOrder.value,
             },
         });
@@ -159,6 +176,7 @@ const deleteItem = async () => {
 
             selectedItem.value = null;
             showCancelModal.value = false;
+            showUpdateStatusModal.value=false;
             fetchOrders();
         } else {
             showError(response.data.message);
@@ -178,11 +196,11 @@ const deleteItem = async () => {
 <template>
     <div class="card mb-4 h-100 w-100">
         <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-            <h6 class="fw-bold">Đơn hàng  {{ displayText }}</h6>
+            <h6 class="fw-bold">Đơn hàng {{ displayText }}</h6>
         </div>
         <div class="card-body">
             <!-- Filter section -->
-            <div class="row mb-3" v-if="(arrays || []).length > 0" >
+            <div class="row mb-3" v-if="(arrays || []).length > 0">
                 <div class="col-md-12">
                     <div class="card bg-light border-0 shadow-sm">
                         <div class="card-body p-2">
@@ -237,7 +255,7 @@ const deleteItem = async () => {
                                 <div class="mb-1">
                                     <span class="text-muted">Tổng tiền:</span>
                                     <span class="fw-bold text-danger ms-1">{{ formatPrice(order.totalPrice)
-                                        }}</span>
+                                    }}</span>
                                 </div>
                                 <div class="text-muted">
                                     <i class="bi bi-box me-1"></i>{{ order.orderItems.length }} sản phẩm
@@ -248,6 +266,10 @@ const deleteItem = async () => {
                             <button class="btn btn-sm btn-outline-danger me-1" v-if="order.statusId === 0"
                                 @click="confirmCancel(order)">
                                 <i class="bi bi-x-circle me-1"></i>Hủy
+                            </button>
+                            <button class="btn btn-sm btn-outline-success me-1"
+                                v-if="order.statusId >= 0 && order.statusId < 3" @click="confirmUpdateStatus(order)">
+                                <i class="bi bi-check me-1"></i>Chuển sang trạng thái tiếp theo
                             </button>
                             <router-link :to="`/admin/order/${order.id}`" class="btn btn-sm btn-primary">
                                 <i class="bi bi-eye me-1"></i>Chi tiết
@@ -260,8 +282,8 @@ const deleteItem = async () => {
                 <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
             </div>
         </div>
-        <div class="modal fade" :class="{ show: showCancelModal }" id="deleteModal" tabindex="-1"
-            aria-labelledby="deleteModalLabel" aria-hidden="true"
+        <div class="modal fade" v-if="selectedItem" :class="{ show: showCancelModal }" id="updateStatusModal"
+            tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
             :style="{ display: showCancelModal ? 'block' : 'none' }">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 shadow-sm">
@@ -276,7 +298,7 @@ const deleteItem = async () => {
                         </div>
 
                         <p class="text-muted small mt-2">Hành động này không thể hoàn tác.</p>
-                      <div class="form-group text-start">
+                        <div class="form-group text-start">
                             <label class="form-label fw-bold">Lý do hủy đơn:</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" v-model="cancelOrder"
@@ -292,7 +314,8 @@ const deleteItem = async () => {
 
                     </div>
                     <div class="modal-footer border-0 justify-content-center pt-0">
-                        <button type="button" class="btn btn-danger rounded-pill px-4" @click="deleteItem">
+                        <button type="button" class="btn btn-danger rounded-pill px-4"
+                            @click="updateOrder((selectedItem?.statusId - 1))">
                             <i class="bi bi-trash me-1"></i> Xác nhận hủy
                         </button>
                     </div>
@@ -301,6 +324,56 @@ const deleteItem = async () => {
         </div>
         <div class="modal-backdrop fade" :class="{ show: showCancelModal }"
             :style="{ display: showCancelModal ? 'block' : 'none' }"></div>
+
+
+        <div class="modal fade" v-if="selectedItem" :class="{ show: showUpdateStatusModal }" id="updateStatusModal"
+            tabindex="-1" aria-labelledby="updateStatusModalLabel" aria-hidden="true"
+            :style="{ display: showUpdateStatusModal ? 'block' : 'none' }">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow-sm">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="updateStatusModalLabel">Xác nhận chuyển trạng thái đơn hàng
+                            #ORD{{ selectedItem?.id }}</h5>
+                        <button type="button" class="btn-close" @click="showUpdateStatusModal = false"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        </div>
+
+                        <p class="text-muted small mt-2">Hành động này không thể hoàn tác.</p>
+                        <div>
+                            Xác nhận chuyển trạng thái đơn hàng từ
+                            <p class="fs-5">
+                                <span
+                                    :class="['badge rounded-pill px-2 py-1 small', badgeColor(selectedItem?.statusId)]">
+
+                                    {{ stringStatus(selectedItem?.statusId) }}
+
+                                </span>
+                                ->
+                                <span
+                                    :class="['badge rounded-pill px-2 py-1 small', badgeColor((selectedItem?.statusId + 1))]">
+                                    {{ stringStatus((selectedItem?.statusId + 1)) }}
+
+                                </span>
+                            </p>
+
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pt-0">
+                        <button type="button" class="btn btn-success rounded-pill px-4" @click="updateOrder((selectedItem?.statusId+1))">
+                            <i class="bi bi-check me-1"></i> Xác nhận chuyển
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade" :class="{ show: showUpdateStatusModal }"
+            :style="{ display: showUpdateStatusModal ? 'block' : 'none' }"></div>
     </div>
 
 </template>
