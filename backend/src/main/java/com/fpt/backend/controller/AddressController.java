@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fpt.backend.bean.AddressBean;
+import com.fpt.backend.entity.Address;
 import com.fpt.backend.resp.ResponseData;
 import com.fpt.backend.service.AddressService;
 import com.fpt.backend.util.ResponseEntityUtil;
@@ -55,8 +56,8 @@ public class AddressController {
             if (result.hasErrors()) {
                 return ResponseEntityUtil.BAD_REQUEST(result.getFieldError().getDefaultMessage());
             }
-            addressService.add(token, addressBean);
-            return ResponseEntityUtil.OK("Tạo địa chỉ thành công", null);
+            Address address= addressService.add(token, addressBean);
+            return ResponseEntityUtil.OK("Tạo địa chỉ thành công", address.getId());
         } catch (Exception e) {
             return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
         }

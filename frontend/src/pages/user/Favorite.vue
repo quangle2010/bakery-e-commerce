@@ -10,11 +10,11 @@
                     <CardProduct :product="product" />
                 </div>
             </div>
-          
+
         </div>
-          <div v-if="arrays.length > 0">
-                <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
-            </div>
+        <div v-if="arrays.length > 0">
+            <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -32,7 +32,12 @@ interface Product {
     image: string;
     weight: number;
     isfavorite: boolean;
-    category: string;
+    category: [
+        {
+            id: number;
+            name: string;
+        }
+    ];
     description: string;
     createAt: string;
 }

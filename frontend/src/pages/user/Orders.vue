@@ -125,16 +125,16 @@ onMounted(() => {
     fetchOrders();
 });
 const displayText = computed(() => {
-    if (totalItems.value === 0) return 'Không có sản phẩm';
-    if (totalItems.value === 1) return 'Hiển thị 1 sản phẩm';
+    if (totalItems.value === 0) return 'Không có đơn hàng';
+    if (totalItems.value === 1) return 'Hiển thị 1 đơn hàng';
 
     const start = (page.value - 1) * limit + 1;
     const end = Math.min(start + arrays.value.length - 1, totalItems.value);
 
     if (totalItems.value === arrays.value.length)
-        return `Hiển thị ${arrays.value.length} sản phẩm`;
+        return `Hiển thị ${arrays.value.length} đơn hàng`;
 
-    return `Hiển thị sản phẩm ${start} đến ${end} trên tổng ${totalItems.value} sản phẩm`;
+    return `Hiển thị đơn hàng ${start} đến ${end} trên tổng ${totalItems.value} đơn hàng`;
 });
 
 const showCancelModal = ref(false);
@@ -176,92 +176,88 @@ const deleteItem = async () => {
 </script>
 
 <template>
-    <div class="h-100">
-        <div class="card mb-4  w-100">
-            <div class="d-flex align-items-center p-4 bg-light border-bottom ">
-                <h6 class="fw-bold">Đơn hàng của tôi {{ displayText }}</h6>
+    <div class="card mb-4 h-100 w-100">
+        <div class="d-flex align-items-center p-4 bg-light border-bottom ">
+            <h6 class="fw-bold">Đơn hàng của tôi {{ displayText }}</h6>
+        </div>
+        <div class="card-body">
+            <!-- Filter section -->
+            <div class="row mb-3" v-if="(arrays || []).length > 0" >
+                <div class="col-md-12">
+                    <div class="card bg-light border-0 shadow-sm">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-center mb-2 small">
+                                <i class="bi bi-funnel text-primary me-1"></i>
+                                <span class="fw-semibold">Lọc đơn hàng</span>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-white">Từ</span>
+                                        <input type="date" class="form-control" id="fromDate" v-model="startDate">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-white">Đến</span>
+                                        <input type="date" class="form-control" id="toDate" v-model="endDate">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body ">
-                <!-- Filter section -->
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <div class="card bg-light border-0 shadow-sm">
-                            <div class="card-body p-2">
-                                <div class="d-flex align-items-center mb-2 small">
-                                    <i class="bi bi-funnel text-primary me-1"></i>
-                                    <span class="fw-semibold">Lọc đơn hàng</span>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white">Từ</span>
-                                            <input type="date" class="form-control" id="fromDate" v-model="startDate">
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white">Đến</span>
-                                            <input type="date" class="form-control" id="toDate" v-model="endDate">
-                                        </div>
-                                    </div>
+            <div v-for="order in arrays" :key="order.id" class="card card_item mb-4 overflow-hidden">
 
-                                </div>
+                <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div :class="['order-status-indicator me-2', statusColor(order.statusId)]"></div>
+                        <div>
+                            <div class="fw-semibold small">Mã đơn: #ORD{{ order.id }}</div>
+                            <div class="d-flex align-items-center text-muted small">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                <span>{{ formatDate(order.createAt) }}</span>
+                                <span class="mx-1">•</span>
+                                <i class="bi bi-person me-1"></i>
+                                <span>{{ order.fullName }}</span>
                             </div>
                         </div>
                     </div>
+                    <span :class="['badge rounded-pill px-2 py-1 small', badgeColor(order.statusId)]">
+                        <i class="bi me-1" :class="statusIcon(order.statusId)"></i>{{ order.status }}
+                    </span>
                 </div>
-                <!-- Orders list -->
-                <!-- Order 1 -->
-                <div v-for="order in arrays" :key="order.id" class="card card_item mb-4 overflow-hidden">
-                    <div class="card-header bg-white py-2 px-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <div :class="['order-status-indicator me-2', statusColor(order.statusId)]"></div>
-                            <div>
-                                <div class="fw-semibold small">Mã đơn: #ORD{{ order.id }}</div>
-                                <div class="d-flex align-items-center text-muted small">
-                                    <i class="bi bi-calendar3 me-1"></i>
-                                    <span>{{ formatDate(order.createAt) }}</span>
-                                    <span class="mx-1">•</span>
-                                    <i class="bi bi-person me-1"></i>
-                                    <span>{{ order.fullName }}</span>
+
+                <div class="card-body py-2 px-3">
+                    <div class="row align-items-center">
+                        <div class="col-7">
+                            <div class="small">
+                                <div class="mb-1">
+                                    <span class="text-muted">Tổng tiền:</span>
+                                    <span class="fw-bold text-danger ms-1">{{ formatPrice(order.totalPrice)
+                                        }}</span>
+                                </div>
+                                <div class="text-muted">
+                                    <i class="bi bi-box me-1"></i>{{ order.orderItems.length }} sản phẩm
                                 </div>
                             </div>
                         </div>
-                        <span :class="['badge rounded-pill px-2 py-1 small', badgeColor(order.statusId)]">
-                            <i class="bi me-1" :class="statusIcon(order.statusId)"></i>{{ order.status }}
-                        </span>
-                    </div>
-
-                    <div class="card-body py-2 px-3">
-                        <div class="row align-items-center">
-                            <div class="col-7">
-                                <div class="small">
-                                    <div class="mb-1">
-                                        <span class="text-muted">Tổng tiền:</span>
-                                        <span class="fw-bold text-danger ms-1">{{ formatPrice(order.totalPrice)
-                                            }}</span>
-                                    </div>
-                                    <div class="text-muted">
-                                        <i class="bi bi-box me-1"></i>{{ order.orderItems.length }} sản phẩm
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-5 text-end">
-                                <button class="btn btn-sm btn-outline-danger me-1" v-if="order.statusId === 0"
-                                    @click="confirmCancel(order)">
-                                    <i class="bi bi-x-circle me-1"></i>Hủy
-                                </button>
-                                <router-link :to="`/user/order-detail/${order.id}`" class="btn btn-sm btn-primary">
-                                    <i class="bi bi-eye me-1"></i>Chi tiết
-                                </router-link>
-                            </div>
+                        <div class="col-5 text-end">
+                            <button class="btn btn-sm btn-outline-danger me-1" v-if="order.statusId === 0"
+                                @click="confirmCancel(order)">
+                                <i class="bi bi-x-circle me-1"></i>Hủy
+                            </button>
+                            <router-link :to="`/user/order-detail/${order.id}`" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye me-1"></i>Chi tiết
+                            </router-link>
                         </div>
                     </div>
                 </div>
-                <div v-if="arrays.length > 0">
-                    <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
-                </div>
-
+            </div>
+            <div v-if="arrays.length > 0">
+                <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="page = $event" />
             </div>
         </div>
         <div class="modal fade" :class="{ show: showCancelModal }" id="deleteModal" tabindex="-1"
@@ -328,6 +324,7 @@ const deleteItem = async () => {
         <div class="modal-backdrop fade" :class="{ show: showCancelModal }"
             :style="{ display: showCancelModal ? 'block' : 'none' }"></div>
     </div>
+
 </template>
 
 <style scoped>

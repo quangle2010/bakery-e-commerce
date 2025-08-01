@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -30,7 +31,7 @@ public class FavoriteController {
     public ResponseEntity<ResponseData> getFavorites(@RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "1") int page) {
         try {
-            Pageable pageable = PageRequest.of(page - 1, 12);
+            Pageable pageable = PageRequest.of(page - 1, 12,Sort.by(Sort.Direction.DESC, "id"));
             List<Object> favorites = favoriteService.getFavoritesByUser(token, pageable);
             int total = favoriteService.countFavoritesByUser(token);
             return ResponseEntityUtil.OK("Favorites retrieved successfully",

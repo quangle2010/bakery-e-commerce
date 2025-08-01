@@ -60,6 +60,20 @@ public class OrderService {
         int userId = user.getId();
         return orderJpa.countByUserIdAndCreateAtRange(userId, startDate, endDate);
     }
+ public List<Object> findByCreateAtRange(String token, Date startDate, Date endDate, Pageable pageable) {
+       
+        Page<Order> oPages = orderJpa.findByCreateAtRange(startDate, endDate, pageable);
+
+        return oPages.getContent().stream() // ✅
+                .sorted(Comparator.comparing(Order::getId).reversed())
+                .map(orderMapper::mapToOrderResponse)
+                .collect(Collectors.toList());
+
+    }
+
+    public int countByCreateAtRange(String token, Date startDate, Date endDate) {
+        return orderJpa.countByCreateAtRange(startDate, endDate);
+    }
 
     public List<Object> findAll(Date startDate, Date endDate) {
         List<Order> orders = orderJpa.findByCreateAt(startDate, endDate);

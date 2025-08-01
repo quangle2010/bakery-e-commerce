@@ -316,28 +316,57 @@ watch(
     }
 );
 
-const paymentMethod = ref(0);
 
+const paymentMethod = ref<number>(0);
 const payment = async () => {
     try {
         const pay = {
             fullName: addressDetail.value?.fullName || '',
             phone: addressDetail.value?.phone || '',
             address: getFullAddress(addressDetail.value?.id),
-            paymentMethod: paymentMethod.value,
+            paymentMethod: Number(paymentMethod.value),
         }
         console.log(pay);
         const reps = await axiosClient.post('/user/payment', null, {
             params: pay
-        }
-
-        );
+        });
         if (reps.data.status == true) {
-            showSuccess(reps.data.message);
-            router.push('/user/orders');
+            localStorage.setItem('orderId', reps.data.data);
+            console.log(reps.data.data)
+            if (Number(paymentMethod.value) == 1) {
+                try {
+                    const orderId = Math.floor(new Date().getTime() / 1000) + 10;
+                    const total = cartItems.value.reduce(
+                        (total, item) => total + item.product.price * item.quantity,
+                        0
+                    )
+                    const paymentData = {
+                        orderId: Number(orderId),
+                        orderInfor: "Thanh toán đơn hàng " + orderId,
+                        total: total,
+                    };
+                    const paymentOnline = await axiosClient.get('/user/payment-online', {
+                        params: paymentData
+                    })
+                    console.log(paymentOnline)
+                    if (paymentOnline.status === 200 && paymentOnline.data.status) {
+                        window.location.href = paymentOnline.data.data;
+                    } else {
+                        showError("Có lỗi khi thanh toán online");
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            } else {
+                showSuccess(reps.data.message);
+                router.push('/user/orders');
+            }
+
             auth.$patch({
                 user: { ...auth.user!, cart: 0 },
             });
+            await auth.fetchUserInfo();
+
         } else {
             showError(reps.data.message);
         }
@@ -429,7 +458,7 @@ const payment = async () => {
                                 <span>Tổng thanh toán:</span>
                                 <span class="text-danger fs-4">{{
                                     formatPrice(totalAmount)
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -447,7 +476,7 @@ const payment = async () => {
                         </div>
                     </div>
                     <div class="card-body p-4">
-                        <div class="mb-3 p-3 border rounded-3 bg-light">
+                        <div class="mb-3 p-3 border rounded-3 bg-light" v-if="addressDetail">
                             <p class="mb-1 fw-bold">{{ addressDetail?.fullName }}</p>
                             <p class="mb-1">
                                 <i class="bi bi-telephone me-2 text-primary"></i>{{ addressDetail?.phone }}
@@ -458,9 +487,13 @@ const payment = async () => {
                         </div>
                         <div class="d-grid">
                             <button class="btn btn-outline-primary d-flex align-items-center justify-content-center"
-                                @click="goToConfirmAddress">
+                                @click="goToConfirmAddress" v-if="addressDetail">
                                 <i class="bi bi-pencil me-2"></i>Thay đổi địa chỉ
                             </button>
+                            <router-link to="/user/add-address" v-if="!addressDetail" class="btn  btn-outline-primary d-flex align-items-center justify-content-center"
+                                title="Thêm địa chỉ">
+                                <i class="bi bi-plus-lg me-1"></i>Thêm địa chỉ
+                            </router-link>
                         </div>
                     </div>
                 </div>

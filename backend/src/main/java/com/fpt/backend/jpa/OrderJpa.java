@@ -21,7 +21,6 @@ public interface OrderJpa extends JpaRepository<Order, Integer> {
                         AND (:startDate IS NULL OR o.createAt >= :startDate)
                         AND (:endDate IS NULL OR o.createAt <= :endDate)
                   """)
-
       Page<Order> findByUserIdAndCreateAtRange(
                   @Param("userId") int userId,
                   @Param("startDate") Date startDate,
@@ -35,6 +34,27 @@ public interface OrderJpa extends JpaRepository<Order, Integer> {
                   """)
       int countByUserIdAndCreateAtRange(
                   @Param("userId") int userId,
+                  @Param("startDate") Date startDate,
+                  @Param("endDate") Date endDate);
+
+
+      @Query("""
+                      SELECT o FROM Order o
+                      WHERE (:startDate IS NULL OR o.createAt >= :startDate)
+                        AND (:endDate IS NULL OR o.createAt <= :endDate)
+                  """)
+      Page<Order> findByCreateAtRange(
+
+                  @Param("startDate") Date startDate,
+                  @Param("endDate") Date endDate, Pageable pageable);
+
+      @Query("""
+                      SELECT COUNT(o) FROM Order o
+                      WHERE
+                         (:startDate IS NULL OR o.createAt >= :startDate)
+                        AND (:endDate IS NULL OR o.createAt <= :endDate)
+                  """)
+      int countByCreateAtRange(
                   @Param("startDate") Date startDate,
                   @Param("endDate") Date endDate);
 

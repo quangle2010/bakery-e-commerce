@@ -134,4 +134,13 @@ public class CartService {
         return saved;
     }
 
+    public boolean updatePaymentStatus(Integer orderId, String vnpayReps) {
+        Order order = orderService.findById(orderId);
+        if (vnpayReps.equals("00")) {
+            order.setPaymentStatus(Constant.ORDER_PAYMENT_STATUS_SUCCESS);
+            orderService.save(order);
+        }
+        return true;
+    }
+
 }

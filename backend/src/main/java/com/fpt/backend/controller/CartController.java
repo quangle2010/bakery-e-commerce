@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/user")
@@ -58,20 +57,6 @@ public class CartController {
         }
     }
 
-    @PostMapping("/payment")
-    public ResponseEntity<ResponseData> postMethodName(@RequestHeader("Authorization") String token,
-            @RequestParam String fullName, @RequestParam String phone, @RequestParam String address,@RequestParam int paymentMethod) {
-        try {
-            Order payment = cartService.payment(token, fullName, phone, address,paymentMethod);
-            if (payment!=null) {
-                return ResponseEntityUtil.OK("Đặt hàng thành công", payment.getId());
 
-            } else {
-                return ResponseEntityUtil.BAD_REQUEST("Đặt hàng thất bại");
-            }
-
-        } catch (Exception e) {
-            return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
-        }
-    }
+    
 }

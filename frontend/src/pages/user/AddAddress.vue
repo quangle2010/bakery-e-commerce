@@ -5,6 +5,7 @@ import axiosClient from '../../util/axiosClient';
 import { showError, showSuccess } from '../../util/useAlert';
 import Loading from '../../components/common/Loading.vue';
 import router from '../../router';
+import { useAuthStore } from '../../store/auth';
 
 interface Province {
   PROVINCE_ID: number;
@@ -180,7 +181,7 @@ const validateForm = () => {
 
   return isValid;
 };
-
+const auth = useAuthStore();
 // --- Submit handler ---
 const handleSubmit = async () => {
   if (!validateForm()) return;
@@ -198,7 +199,11 @@ const handleSubmit = async () => {
     const { data } = await axiosClient.post("/user/addresses", reqBody);
     if (data.status === true) {
       showSuccess("Cập nhật thông tin", data.message);
+      if (auth?.user?.addressId===null) {
+        auth.updateAddressId(data.data);
+      }
       router.back();
+
     } else {
       showError("Cập nhật thất bại");
     }
