@@ -23,6 +23,7 @@ public class RegisterController {
     public ResponseEntity<ResponseData> register(@RequestBody @Valid RegisterBean registerBean, BindingResult result) {
         try {
             if (result.hasErrors()) {
+                //Hiện lỗi bên bean
                 return ResponseEntityUtil.BAD_REQUEST_BINDING_RESULT(result);
             }
             authService.register(registerBean);

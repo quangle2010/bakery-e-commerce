@@ -27,11 +27,12 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
+    // lấy ds sp yêu thích
     @GetMapping("/favorites")
     public ResponseEntity<ResponseData> getFavorites(@RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "1") int page) {
         try {
-            Pageable pageable = PageRequest.of(page - 1, 12,Sort.by(Sort.Direction.DESC, "id"));
+            Pageable pageable = PageRequest.of(page - 1, 12, Sort.by(Sort.Direction.DESC, "id"));
             List<Object> favorites = favoriteService.getFavoritesByUser(token, pageable);
             int total = favoriteService.countFavoritesByUser(token);
             return ResponseEntityUtil.OK("Favorites retrieved successfully",
@@ -41,19 +42,18 @@ public class FavoriteController {
         }
     }
 
+    // thêm,xóa sp yêu thích
     @PostMapping("favorite")
     public ResponseEntity<ResponseData> postMethodName(@RequestHeader("Authorization") String token,
             @RequestParam Integer productId) {
         try {
             Favorite favorite = favoriteService.addAndRemoveFavorite(token, productId);
             return ResponseEntityUtil.OK(favorite == null ? "Đã xóa khỏi yêu thích" : "Đã thêm vào yêu thích",
-                   favorite);
+                    favorite);
 
         } catch (Exception e) {
             return ResponseEntityUtil.BAD_REQUEST("Error adding favorite: " + e.getMessage());
         }
     }
 
-
-    
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -127,6 +128,17 @@ public class AdminProductController {
                     null);
         } catch (Exception e) {
             return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/product/{id}")
+    public ResponseEntity<ResponseData> delete(@PathVariable int id){
+        try {
+            productService.delete(id);
+            return ResponseEntityUtil.OK("Xóa sản phẩm thành công", null);
+        } catch (Exception e) {
+             return ResponseEntityUtil.BAD_REQUEST(e.getMessage());
         }
     }
 

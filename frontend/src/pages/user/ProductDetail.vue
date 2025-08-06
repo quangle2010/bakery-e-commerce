@@ -23,6 +23,7 @@ interface Product {
 const data = ref<Product | null>(null);
 const id = ref(route.params.id);
 const quantity = ref(Number(route.query.quantity) || 1);
+
 const productDetail = async () => {
     try {
         const reps = await axiosClient.get(`/product/${id.value}`)

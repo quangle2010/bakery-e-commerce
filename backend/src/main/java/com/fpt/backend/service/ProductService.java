@@ -166,9 +166,10 @@ public class ProductService {
             return false;
         }
         if (product.getCartItems().size() > 0 || product.getOrderItems().size() > 0
-                || product.getFavorites().size() > 0 || product.getAttributeOptionProducts().size() > 0) {
+                || product.getFavorites().size() > 0) {
             return false;
         }
+        attributeOptionProductService.deleteByProduct(product);
         productJpa.delete(product);
         return true;
     }

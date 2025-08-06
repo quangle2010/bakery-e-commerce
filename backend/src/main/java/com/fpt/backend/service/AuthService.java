@@ -23,6 +23,7 @@ public class AuthService {
     }
 
     public User register(RegisterBean registerBean) {
+        //khởi tạo user và set dữ liệu
         User user = new User();
         user.setFullName(FormatCustomerInfo.customFullName(registerBean.getFullName()));
         user.setEmail(registerBean.getEmail());
