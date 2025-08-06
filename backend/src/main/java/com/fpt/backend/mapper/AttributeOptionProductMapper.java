@@ -12,7 +12,7 @@ import com.fpt.backend.entity.AttributeOptionProduct;
 @Component
 public class AttributeOptionProductMapper {
 
-
+    // sort sắp xếp loại bánh lên đầu
  public Object toDTO(List<AttributeOptionProduct> attributeOptionProducts) {
     if (attributeOptionProducts == null || attributeOptionProducts.isEmpty()) {
         return null;

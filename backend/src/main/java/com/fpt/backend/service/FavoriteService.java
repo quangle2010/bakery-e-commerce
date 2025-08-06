@@ -27,6 +27,7 @@ public class FavoriteService {
     @Autowired
     private ProductMapper productMapper;
 
+    // Token kiểm tra user đã đăng nhập
     public List<Object> getFavoritesByUser(String token, Pageable pageable) {
         User user = userService.getUserIsLogin(token);
         if (user != null) {
@@ -46,18 +47,18 @@ public class FavoriteService {
         return 0;
     }
 
-    
+    // Kiem tra sản phẩm đã yêu thích chưa
     public Favorite findByUserIdAndProductId(Integer userId, Integer productId) {
         return favoriteJpa.findByUserIdAndProductId(userId, productId)
                 .orElse(null);
     }
 
-   public Favorite addAndRemoveFavorite(String token, Integer productId) {
-       User user = userService.getUserIsLogin(token);
-       Product product = productService.getProductById(productId);
+    // Thêm và xóa sản phẩm yêu thích
+    public Favorite addAndRemoveFavorite(String token, Integer productId) {
+        User user = userService.getUserIsLogin(token);
+        Product product = productService.getProductById(productId);
 
-       Favorite favorite = findByUserIdAndProductId(user.getId(), productId);
-
+        Favorite favorite = findByUserIdAndProductId(user.getId(), productId);
         if (favorite == null) {
             favorite = new Favorite();
             favorite.setUser(user);
@@ -68,6 +69,5 @@ public class FavoriteService {
             return null;
         }
     }
-
 
 }

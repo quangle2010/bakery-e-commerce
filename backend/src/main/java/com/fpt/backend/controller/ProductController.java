@@ -37,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ResponseData> getMethodName(@PathVariable int id,
+    public ResponseEntity<ResponseData> getMethodName(@PathVariable Integer id,
             @RequestHeader(value = "Authorization", required = false) String token) {
         try {
             return ResponseEntityUtil.OK("Load thành công", productService.getProductDTO(id, token));

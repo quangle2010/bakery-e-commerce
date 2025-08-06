@@ -66,12 +66,13 @@ public class ProductService {
         return productJpa.totalItem(keyword);
     }
 
+    //tìm sản phẩm
     public Product getProductById(Integer id) {
         return productJpa.findById(id).orElse(null);
     }
 
-    public Object getProductDTO(int id, String token) {
-        Product product = productJpa.findById(id).orElseGet(null);
+    public Object getProductDTO(Integer id, String token) {
+        Product product = getProductById(id);
         return productMapper.toDTODetail(product, token);
     }
 

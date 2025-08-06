@@ -19,7 +19,7 @@ public class ProductMapper {
     private AttributeOptionProductMapper attributeOptionProductMapper;
 
     public boolean isFavorite(String token, Integer productId) {
-        if (token==null|| token.isEmpty()) {
+        if (token == null || token.isEmpty()) {
             return false;
         }
         return userService.isFavorite(token, productId);
@@ -39,7 +39,8 @@ public class ProductMapper {
         return map;
     }
 
-     public Object toDTODetail(Product product,String token) {
+    //lấy thông tin đối tượng Product map về DTO
+    public Object toDTODetail(Product product, String token) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", product.getId());
         map.put("name", product.getName());
@@ -50,7 +51,7 @@ public class ProductMapper {
         map.put("createAt", product.getCreateAt());
         map.put("weight", product.getWeight());
         map.put("isfavorite", isFavorite(token, product.getId()));
-       map.put("category", attributeOptionProductMapper.toDTO(product.getAttributeOptionProducts()));
+        map.put("category", attributeOptionProductMapper.toDTO(product.getAttributeOptionProducts()));
         return map;
     }
 }
