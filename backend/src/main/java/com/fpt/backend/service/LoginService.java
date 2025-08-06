@@ -26,6 +26,6 @@ public class LoginService {
         if (user == null || !passwordEncoder.matches(loginBean.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Tài khoản hoặc mật khẩu không đúng");
         }
-        return jwtUtil.generateToken(user.getId(), user.getRole(), Constant.TYPEJWT_LOGIN);
+        return jwtUtil.generateToken(user.getId(), Constant.TYPEJWT_LOGIN);
     }
 }

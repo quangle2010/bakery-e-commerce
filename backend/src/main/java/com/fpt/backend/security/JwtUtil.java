@@ -8,15 +8,16 @@ import io.jsonwebtoken.*;
 @Component
 public class JwtUtil {
 
-    public String generateToken(int userId, int roleId, String typeJWT) {
+    public String generateToken(int userId, String typeJWT) {
         try {
             return Jwts.builder()
                     .setSubject(String.valueOf(userId))
-                    .claim("roleId", roleId)
                     .claim("typeJWT", typeJWT)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis()
-                            + (typeJWT.equals(Constant.TYPEJWT_LOGIN) ? Constant.EXPIRATION_TIME : Constant.EXPIRATION_TIME_RESETPASSWORD)))
+                            + (Constant.TYPEJWT_LOGIN.equals(typeJWT)
+                                  ? Constant.EXPIRATION_TIME
+                                  : Constant.EXPIRATION_TIME_RESETPASSWORD)))
                     .signWith(Constant.SIGNING_KEY, SignatureAlgorithm.HS256)
                     .compact();
         } catch (Exception e) {
@@ -34,15 +35,6 @@ public class JwtUtil {
         }
     }
 
-    public int extractRoleId(String token) {
-        try {
-            return parseClaims(token).get("roleId", Integer.class);
-        } catch (Exception e) {
-            System.err.println("❌ extractRoleId lỗi: " + e.getMessage());
-            return -1;
-        }
-    }
-
     public String extractTypeJWT(String token) {
         try {
             return parseClaims(token).get("typeJWT", String.class);
@@ -55,15 +47,14 @@ public class JwtUtil {
     public boolean validateToken(String token, int userId, String expectedTypeJWT) {
         try {
             Claims claims = parseClaims(token);
-
             String extractedUserId = claims.getSubject();
             String extractedTypeJWT = claims.get("typeJWT", String.class);
 
-            return extractedUserId != null &&
-                    extractedUserId.equals(String.valueOf(userId)) &&
-                    extractedTypeJWT != null &&
-                    extractedTypeJWT.equals(expectedTypeJWT) &&
-                    !isTokenExpired(claims);
+            return extractedUserId != null
+                    && extractedUserId.equals(String.valueOf(userId))
+                    && extractedTypeJWT != null
+                    && extractedTypeJWT.equals(expectedTypeJWT)
+                    && !isTokenExpired(claims);
 
         } catch (JwtException | IllegalArgumentException e) {
             System.err.println("❌ Token không hợp lệ: " + e.getMessage());
@@ -72,8 +63,7 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(Claims claims) {
-        Date expiration = claims.getExpiration();
-        return expiration.before(new Date());
+        return claims.getExpiration().before(new Date());
     }
 
     private Claims parseClaims(String token) {
