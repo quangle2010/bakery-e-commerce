@@ -264,7 +264,7 @@ const handleSubmit = async () => {
         );
 
         if (data.status === true) {
-            showSuccess("Cập nhật thông tin", data.message);
+            showSuccess("Lưu thông tin", data.message);
             console.log("Address updated successfully:", data.data);
             router.back();
         } else {

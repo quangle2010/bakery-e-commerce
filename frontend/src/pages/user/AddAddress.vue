@@ -198,7 +198,7 @@ const handleSubmit = async () => {
     };
     const { data } = await axiosClient.post("/user/addresses", reqBody);
     if (data.status === true) {
-      showSuccess("Cập nhật thông tin", data.message);
+      showSuccess("Lưu thông tin", data.message);
       if (auth?.user?.addressId===null) {
         auth.updateAddressId(data.data);
       }

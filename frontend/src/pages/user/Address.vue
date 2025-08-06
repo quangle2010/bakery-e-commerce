@@ -3,6 +3,7 @@ import { onMounted, ref, computed } from 'vue';
 import axiosClient from '../../util/axiosClient';
 import { showError, showSuccess } from '../../util/useAlert';
 import axios from 'axios';
+import { useAuthStore } from '../../store/auth';
 
 interface Address {
   id: number;
@@ -37,7 +38,7 @@ const addresses = ref<Address[]>([]);
 const showDeleteModal = ref(false);
 const showDefaultModal = ref(false);
 const selectedItem = ref<Address | null>(null);
-
+const auth=useAuthStore();
 const provinces = ref<Province[]>([]);
 
 // Use Maps to cache districts and wards per province/district id
@@ -125,6 +126,7 @@ const defaultItem = async () => {
       showDefaultModal.value = false;
       selectedItem.value = null;
       await fetchAddresses();
+      await auth.fetchUserInfo();
     } else {
       showError(response.data.message);
     }
